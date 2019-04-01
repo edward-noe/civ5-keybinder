@@ -6,7 +6,44 @@
         xmlns:local="clr-namespace:civ5_keybinder"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+    
+    <Border Padding="10">
+
+        <StackPanel>
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Margin="0 0 5 5" Content="Apply"/>
+                <Button Grid.Column="1" Margin="5 0 0 5" Content="Reset to Defaults"/>
+
+            </Grid>
+
+            <Grid x:Name="main_grid">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="15*"/>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="10*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="DLC"/>
+                <TextBlock Grid.Column="1" Text="Function"/>
+                <TextBlock Grid.Column="2" Text="Key"/>
+                <TextBlock Grid.Column="3" Text="Ctrl"/>
+                <TextBlock Grid.Column="4" Text="Shift"/>
+                <TextBlock Grid.Column="5" Text="Alt"/>
+
+            </Grid>
+
+        </StackPanel>
+
+    </Border>
 </Window>
