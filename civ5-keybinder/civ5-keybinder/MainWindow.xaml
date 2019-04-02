@@ -23,11 +23,11 @@
 
             </Grid>
 
-            <Grid x:Name="main_grid">
+            <Grid Grid.Column="1" x:Name="main_grid">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="5*"/>
-                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="49*"/>
                     <ColumnDefinition Width="15*"/>
                     <ColumnDefinition Width="10*"/>
                     <ColumnDefinition Width="10*"/>
