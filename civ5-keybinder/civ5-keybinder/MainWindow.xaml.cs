@@ -160,7 +160,6 @@ namespace civ5_keybinder
                 new Hotkey(5, 0, "Ranged Attack", "B", false, false, false),
                 new Hotkey(5, 0, "Pillage", "P", false, true, false),
                 new Hotkey(2, 0, "Paradrop", "P", false, false, false),
-
             };
 
             return hotkeys;

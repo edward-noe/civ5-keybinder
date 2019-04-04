@@ -5,13 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:civ5_keybinder"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    
+        Title="Civilization V Keybinder" Height="450" Width="800">
+
     <Border Padding="10">
 
-        <StackPanel>
+        <Grid>
 
-            <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -23,27 +29,50 @@
 
             </Grid>
 
-            <Grid Grid.Column="1" x:Name="main_grid">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="6*"/>
-                    <ColumnDefinition Width="49*"/>
-                    <ColumnDefinition Width="15*"/>
-                    <ColumnDefinition Width="10*"/>
-                    <ColumnDefinition Width="10*"/>
-                    <ColumnDefinition Width="10*"/>
-                </Grid.ColumnDefinitions>
+                <Grid>
 
-                <TextBlock Grid.Column="0" Text="DLC"/>
-                <TextBlock Grid.Column="1" Text="Function"/>
-                <TextBlock Grid.Column="2" Text="Key"/>
-                <TextBlock Grid.Column="3" Text="Ctrl"/>
-                <TextBlock Grid.Column="4" Text="Shift"/>
-                <TextBlock Grid.Column="5" Text="Alt"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="49*"/>
+                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="17.5"/>
+                    </Grid.ColumnDefinitions>
 
-            </Grid>
+                    <TextBlock Grid.Column="0" Text="DLC" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="1" Text="Function" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="2" Text="Key" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="3" Text="Ctrl" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="4" Text="Shift" FontSize="16" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="5" Text="Alt" FontSize="16" FontWeight="Bold"/>
 
-        </StackPanel>
+                </Grid>
+
+            </ScrollViewer>
+
+            <ScrollViewer Grid.Row="2">
+
+                <Grid x:Name="main_grid">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="49*"/>
+                        <ColumnDefinition Width="15*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="10*"/>
+                    </Grid.ColumnDefinitions>
+
+                </Grid>
+
+            </ScrollViewer>
+
+        </Grid>
 
     </Border>
+    
 </Window>
