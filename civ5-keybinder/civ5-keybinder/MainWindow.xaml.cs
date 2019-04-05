@@ -31,17 +31,26 @@ namespace civ5_keybinder
         {
             void AddText(string text, int row, int col)
             {
-                main_grid.RowDefinitions.Add(new RowDefinition());
-                TextBlock text_block = new TextBlock();
-                text_block.Text = text;
-                Grid.SetRow(text_block, row);
-                Grid.SetColumn(text_block, col);
-                main_grid.Children.Add(text_block);
+                TextBlock block = new TextBlock();
+                block.Text = text;
+                Grid.SetRow(block, row);
+                Grid.SetColumn(block, col);
+                main_grid.Children.Add(block);
+            }
+
+            void AddCheckBox(bool state, int row, int col)
+            {
+                CheckBox box = new CheckBox();
+                box.IsChecked = state;
+                Grid.SetRow(box, row);
+                Grid.SetColumn(box, col);
+                main_grid.Children.Add(box);
             }
 
             for (int hotkey_num = 0; hotkey_num < hotkeys.Count; hotkey_num++)
             {
-                for (int attribute_num = 0; attribute_num < 3; attribute_num++)
+                main_grid.RowDefinitions.Add(new RowDefinition());
+                for (int attribute_num = 0; attribute_num < 6; attribute_num++)
                 {
                     switch (attribute_num)
                     {
@@ -53,6 +62,15 @@ namespace civ5_keybinder
                             break;
                         case 2:
                             AddText(hotkeys[hotkey_num].Key, hotkey_num + 1, 2);
+                            break;
+                        case 3:
+                            AddCheckBox(hotkeys[hotkey_num].Ctrl, hotkey_num + 1, 3);
+                            break;
+                        case 4:
+                            AddCheckBox(hotkeys[hotkey_num].Shift, hotkey_num + 1, 4);
+                            break;
+                        case 5:
+                            AddCheckBox(hotkeys[hotkey_num].Alt, hotkey_num + 1, 5);
                             break;
                     }
                 }                
@@ -74,31 +92,37 @@ namespace civ5_keybinder
                 new Hotkey(8, 0, "Victory Progress", "F8", false, false, false),
                 new Hotkey(8, 0, "Demographics", "F9", false, false, false),
                 new Hotkey(8, 0, "Strategic View", "F10", false, false, false),
+                new Hotkey(8, 0, "Advisor Counsel", "V", false, false, false),
+                new Hotkey(8, 0, "Espionage", "E", true, false, false),
+                new Hotkey(8, 0, "Religion", "P", true, false, false),
 
+                // Turn Management
                 new Hotkey(8, 0, "Next Turn", "Enter", false, false, false), // Alternate kotkey: Ctrl + Space
                 new Hotkey(8, 0, "Force Next Turn", "Enter", false, true, false),
-                new Hotkey(8, 0, "Advisor Counsel", "V", false, false, false),
 
+                // World View
                 new Hotkey(6, 0, "Show Hex Grid", "G", false, false, false),
                 new Hotkey(8, 0, "Show Resources Icons", "R", true, false, false),
                 new Hotkey(8, 0, "Show Yields", "Y", false, false, false),
 
+                // Zoom
                 new Hotkey(7, 0, "Zoom In", "=", false, false, false), // Alternate kotkey: PageUp
                 new Hotkey(7, 0, "Zoom Out", "-", false, false, false), // Alternate kotkey: PageDown
 
+                // Cities
                 new Hotkey(8, 0, "Capital", "Home", false, false, false),
                 new Hotkey(8, 0, "Next", "End", false, false, false), // Possibly flipped with previous
                 new Hotkey(8, 0, "Previous", "Insert", false, false, false),
 
+                // Saves
                 new Hotkey(8, 0, "Quick Save", "F11", false, false, false),
                 new Hotkey(8, 0, "Quick Load", "F11", true, false, false), // Ctrl or shift?
                 new Hotkey(8, 0, "Save", "S", true, false, false),
                 new Hotkey(8, 0, "Load", "L", true, false, false),
 
+                // Other Menus
                 new Hotkey(6, 0, "Menu", "Escape", false, false, false),
                 new Hotkey(8, 0, "Options", "O", true, false, false),
-                new Hotkey(8, 0, "Espionage", "E", true, false, false),
-                new Hotkey(8, 0, "Religion", "P", true, false, false),
 
                 // General
                 new Hotkey(5, 0, "Do Nothing", "Space", false, false, false),
@@ -163,7 +187,6 @@ namespace civ5_keybinder
             };
 
             return hotkeys;
-
         }
 
     }
