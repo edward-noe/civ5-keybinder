@@ -101,10 +101,6 @@ namespace civ5_keybinder
             Button button = sender as Button;
             object initialContent = button.Content;
             button.Content = e.Key.ToString().ToUpper();
-            if (e.Key == Key.Insert)
-            {
-                button.Content = "Insert";
-            }
         }
 
         private void button_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
