@@ -5,8 +5,70 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:civ5_keybinder"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Civilization V Keybinder" Height="450" Width="800">
+
+    <Border>
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="5 5 5 5">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Margin="0 0 5 5" Name="applyButton" Content="Apply" Click="applyButton_Click"/>
+                <Button Grid.Column="1" Margin="5 0 0 5" Name="resetButton" Content="Reset to Defaults" Click="resetButton_Click"/>
+
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="5 0 0 0">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="39*"/>
+                    <ColumnDefinition Width="25*"/>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="17.5"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="DLC" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Grid.Column="1" Text="Function" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Grid.Column="2" Text="Key" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="Ctrl" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="Shift" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="5" Text="Alt" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+
+            </Grid>
+
+            <ScrollViewer Grid.Row="2" Margin="5 0 0 0">
+
+                <Grid x:Name="main_grid">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="39*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="10*"/>
+                    </Grid.ColumnDefinitions>
+
+                </Grid>
+
+            </ScrollViewer>
+
+        </Grid>
+
+    </Border>
+    
 </Window>
