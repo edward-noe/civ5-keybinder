@@ -26,9 +26,12 @@ namespace civ5_keybinder
 
             InitializeGrid(DefaultHotkeys());
         }
-
+        
         public void InitializeGrid(List<Hotkey> hotkeys)
         {
+            // I don't know why adding this additional row is neccesary, but it is
+            main_grid.RowDefinitions.Add(new RowDefinition());
+
             void AddText(string text, int row, int col)
             {
                 TextBlock block = new TextBlock();
@@ -38,9 +41,23 @@ namespace civ5_keybinder
                 main_grid.Children.Add(block);
             }
 
+            void AddButton(string text, int row, int col)
+            {
+                Button button = new Button();
+                button.Width = 150;
+                button.Content = text;
+                button.GotKeyboardFocus += new KeyboardFocusChangedEventHandler(button_GotKeyboardFocus);
+                button.LostKeyboardFocus += new KeyboardFocusChangedEventHandler(button_LostKeyboardFocus);
+                button.KeyDown += new KeyEventHandler(button_KeyDown);
+                Grid.SetRow(button, row);
+                Grid.SetColumn(button, col);
+                main_grid.Children.Add(button);
+            }
+
             void AddCheckBox(bool state, int row, int col)
             {
                 CheckBox box = new CheckBox();
+                box.HorizontalAlignment = HorizontalAlignment.Center;
                 box.IsChecked = state;
                 Grid.SetRow(box, row);
                 Grid.SetColumn(box, col);
@@ -49,7 +66,9 @@ namespace civ5_keybinder
 
             for (int hotkey_num = 0; hotkey_num < hotkeys.Count; hotkey_num++)
             {
+                // Adds a row to the main grid for each hotkey
                 main_grid.RowDefinitions.Add(new RowDefinition());
+
                 for (int attribute_num = 0; attribute_num < 6; attribute_num++)
                 {
                     switch (attribute_num)
@@ -61,7 +80,7 @@ namespace civ5_keybinder
                             AddText(hotkeys[hotkey_num].Function, hotkey_num + 1, 1);
                             break;
                         case 2:
-                            AddText(hotkeys[hotkey_num].Key, hotkey_num + 1, 2);
+                            AddButton(hotkeys[hotkey_num].Key, hotkey_num + 1, 2);
                             break;
                         case 3:
                             AddCheckBox(hotkeys[hotkey_num].Ctrl, hotkey_num + 1, 3);
@@ -75,6 +94,31 @@ namespace civ5_keybinder
                     }
                 }                
             }
+        }
+
+        private void button_KeyDown(object sender, KeyEventArgs e)
+        {
+            Button button = sender as Button;
+            object initialContent = button.Content;
+            button.Content = e.Key.ToString().ToUpper();
+            if (e.Key == Key.Insert)
+            {
+                button.Content = "Insert";
+            }
+        }
+
+        private void button_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            Button button = sender as Button;
+            button.Background = (Brush)new BrushConverter().ConvertFrom("#FFBEE6FD");
+            button.BorderBrush = (Brush)new BrushConverter().ConvertFrom("#FF3C7FB1");
+        }
+
+        private void button_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            Button button = sender as Button;
+            button.Background = (Brush)new BrushConverter().ConvertFrom("#FFDDDDDD");
+            button.BorderBrush = (Brush)new BrushConverter().ConvertFrom("#FF707070");
         }
 
         public List<Hotkey> DefaultHotkeys()
@@ -189,6 +233,15 @@ namespace civ5_keybinder
             return hotkeys;
         }
 
+        private void applyButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("apply button clicked");
+        }
+
+        private void resetButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("reset button clicked");
+        }
     }
 
     public class Hotkey
