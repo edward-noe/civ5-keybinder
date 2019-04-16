@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.Xml;
+
 namespace civ5_keybinder
 {
     /// <summary>
@@ -24,11 +26,22 @@ namespace civ5_keybinder
         {
             InitializeComponent();
 
-            InitializeGrid(DefaultHotkeys());
-        }
+            UpdateGrid(DefaultHotkeys());
+            UpdateGrid(DefaultHotkeys());
 
-        public void InitializeGrid(List<Hotkey> hotkeys)
+            XMLHotkeyFile doc = new XMLHotkeyFile("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml");
+
+            //Display the document element.
+            doc.ShowFile();
+        }
+        
+        public void UpdateGrid(List<Hotkey> hotkeys)
         {
+            // Removes all elements from the grid
+            // I don't know if there is a better way to refresh the UI
+            main_grid.Children.Clear();
+            main_grid.RowDefinitions.Clear();
+
             // I don't know why this additional row is neccesary, but it is
             main_grid.RowDefinitions.Add(new RowDefinition());
 
@@ -92,7 +105,7 @@ namespace civ5_keybinder
                             AddCheckBox(hotkeys[hotkey_num].Alt, hotkey_num + 1, 5);
                             break;
                     }
-                }
+                }                
             }
         }
 
@@ -292,12 +305,12 @@ namespace civ5_keybinder
             return hotkeys;
         }
 
-        private void applyButton_Click(object sender, RoutedEventArgs e)
+        private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("apply button clicked");
         }
 
-        private void resetButton_Click(object sender, RoutedEventArgs e)
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("reset button clicked");
         }
