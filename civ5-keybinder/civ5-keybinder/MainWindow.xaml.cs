@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.Xml;
+
 namespace civ5_keybinder
 {
     /// <summary>
@@ -24,12 +26,23 @@ namespace civ5_keybinder
         {
             InitializeComponent();
 
-            InitializeGrid(DefaultHotkeys());
+            UpdateGrid(DefaultHotkeys());
+            UpdateGrid(DefaultHotkeys());
+
+            XMLHotkeyFile doc = new XMLHotkeyFile("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml");
+
+            //Display the document element.
+            doc.ShowFile();
         }
         
-        public void InitializeGrid(List<Hotkey> hotkeys)
+        public void UpdateGrid(List<Hotkey> hotkeys)
         {
-            // I don't know why adding this additional row is neccesary, but it is
+            // Removes all elements from the grid
+            // I don't know if there is a better way to refresh the UI
+            main_grid.Children.Clear();
+            main_grid.RowDefinitions.Clear();
+
+            // I don't know why this additional row is neccesary, but it is
             main_grid.RowDefinitions.Add(new RowDefinition());
 
             void AddText(string text, int row, int col)
@@ -48,7 +61,7 @@ namespace civ5_keybinder
                 button.Content = text;
                 button.GotKeyboardFocus += new KeyboardFocusChangedEventHandler(button_GotKeyboardFocus);
                 button.LostKeyboardFocus += new KeyboardFocusChangedEventHandler(button_LostKeyboardFocus);
-                button.KeyDown += new KeyEventHandler(button_KeyDown);
+                button.PreviewKeyDown += new KeyEventHandler(button_PreviewKeyDown);
                 Grid.SetRow(button, row);
                 Grid.SetColumn(button, col);
                 main_grid.Children.Add(button);
@@ -96,15 +109,74 @@ namespace civ5_keybinder
             }
         }
 
-        private void button_KeyDown(object sender, KeyEventArgs e)
+        private void button_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             Button button = sender as Button;
-            object initialContent = button.Content;
-            button.Content = e.Key.ToString().ToUpper();
-            if (e.Key == Key.Insert)
+
+            //MessageBox.Show(e.Key.ToString());
+
+            //Dictionary<Key, string> specialKeys = new Dictionary<Key, string>
+            //{
+            //    {Key.PageDown, "PageDown"},
+            //    {Key.PageUp, "PageUp"},
+            //    //{Key.System, "F10"},
+            //    {Key.D0, "0"},
+            //};
+
+            if (e.Key == Key.Return)
             {
-                button.Content = "Insert";
+                button.Content = "Enter";
+                e.Handled = true;
             }
+            else if (e.Key == Key.System)
+            {
+                button.Content = "F10";
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Next)
+            {
+                button.Content = "PageDown";
+                // Prevents page from scrolling when pressed
+                e.Handled = true;
+            }
+            else if (e.Key == Key.PageDown)
+            {
+                button.Content = "PageUp";
+                e.Handled = true;
+            }
+            //else if (e.Key == Key.Space)
+            //{
+            //    button.Content = "hello";
+            //}
+            else
+            {
+                if (e.Key.ToString().Length > 1)
+                {
+                    button.Content = e.Key.ToString();
+                    e.Handled = true;
+                }
+                else
+                {
+                    button.Content = e.Key.ToString().ToUpper();
+                    e.Handled = true;
+                }
+            }
+
+            //if (specialKeys.ContainsKey(e.Key) == true)
+            //{
+            //    button.Content = specialKeys[e.Key];
+            //}
+            //else
+            //{
+            //    if (e.Key.ToString().Length > 1)
+            //    {
+            //        button.Content = e.Key.ToString();
+            //    }
+            //    else
+            //    {
+            //        button.Content = e.Key.ToString().ToUpper();
+            //    }
+            //}
         }
 
         private void button_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -233,55 +305,14 @@ namespace civ5_keybinder
             return hotkeys;
         }
 
-        private void applyButton_Click(object sender, RoutedEventArgs e)
+        private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("apply button clicked");
         }
 
-        private void resetButton_Click(object sender, RoutedEventArgs e)
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("reset button clicked");
-        }
-    }
-
-    public class Hotkey
-    {
-        public int File { get; }
-        public string DLC { get; }
-        public string Function { get; }
-        public string Key { get; set; }
-        public bool Ctrl { get; set; }
-        public bool Shift { get; set; }
-        public bool Alt { get; set; }
-
-        public Hotkey(int defFile, int defDLC, string defFunction, string defKey, bool defCtrl, bool defShift, bool defAlt)
-        {
-            File = defFile;
-            switch (defDLC)
-            {
-                case 0:
-                    DLC = "";
-                    break;
-                case 1:
-                    DLC = "G + K";
-                    break;
-                case 2:
-                    DLC = "BNW";
-                    break;
-            }
-            Function = defFunction;
-            Key = defKey;
-            Ctrl = defCtrl;
-            Shift = defShift;
-            Alt = defAlt;
-        }
-
-        public void DefineBinding(string defKey, bool defCtrl, bool defShift, bool defAlt)
-        {
-            Key = defKey;
-            Ctrl = defCtrl;
-            Shift = defShift;
-            Alt = defAlt;
         }
     }
 }
