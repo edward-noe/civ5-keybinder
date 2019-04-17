@@ -26,102 +26,22 @@ namespace civ5_keybinder
         {
             InitializeComponent();
 
-            UpdateGrid(DefaultHotkeys());
-            UpdateGrid(DefaultHotkeys());
+            List<Hotkey> hotkeys = new List<Hotkey>();
+            hotkeys.Add(new Hotkey(1, 0, "Civilopedia", "F1", false, false, false));
+            hotkeys.Add(new Hotkey(1, 0, "Economic", "F2", false, false, false));
 
-            XMLHotkeyFile doc = new XMLHotkeyFile("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml");
+            // Sets the source of data for ItemControl element to hotkeys list
+            itemsControl.ItemsSource = hotkeys;
+
+            //XMLHotkeyFile doc = new XMLHotkeyFile("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml");
 
             //Display the document element.
-            doc.ShowFile();
-        }
-        
-        public void UpdateGrid(List<Hotkey> hotkeys)
-        {
-            // Removes all elements from the grid
-            // I don't know if there is a better way to refresh the UI
-            main_grid.Children.Clear();
-            main_grid.RowDefinitions.Clear();
-
-            // I don't know why this additional row is neccesary, but it is
-            main_grid.RowDefinitions.Add(new RowDefinition());
-
-            void AddText(string text, int row, int col)
-            {
-                TextBlock block = new TextBlock();
-                block.Text = text;
-                Grid.SetRow(block, row);
-                Grid.SetColumn(block, col);
-                main_grid.Children.Add(block);
-            }
-
-            void AddButton(string text, int row, int col)
-            {
-                Button button = new Button();
-                button.Width = 150;
-                button.Content = text;
-                button.GotKeyboardFocus += new KeyboardFocusChangedEventHandler(button_GotKeyboardFocus);
-                button.LostKeyboardFocus += new KeyboardFocusChangedEventHandler(button_LostKeyboardFocus);
-                button.PreviewKeyDown += new KeyEventHandler(button_PreviewKeyDown);
-                Grid.SetRow(button, row);
-                Grid.SetColumn(button, col);
-                main_grid.Children.Add(button);
-            }
-
-            void AddCheckBox(bool state, int row, int col)
-            {
-                CheckBox box = new CheckBox();
-                box.HorizontalAlignment = HorizontalAlignment.Center;
-                box.IsChecked = state;
-                Grid.SetRow(box, row);
-                Grid.SetColumn(box, col);
-                main_grid.Children.Add(box);
-            }
-
-            for (int hotkey_num = 0; hotkey_num < hotkeys.Count; hotkey_num++)
-            {
-                // Adds a row to the main grid for each hotkey
-                main_grid.RowDefinitions.Add(new RowDefinition());
-
-                for (int attribute_num = 0; attribute_num < 6; attribute_num++)
-                {
-                    switch (attribute_num)
-                    {
-                        case 0:
-                            AddText(hotkeys[hotkey_num].DLC, hotkey_num + 1, 0);
-                            break;
-                        case 1:
-                            AddText(hotkeys[hotkey_num].Function, hotkey_num + 1, 1);
-                            break;
-                        case 2:
-                            AddButton(hotkeys[hotkey_num].Key, hotkey_num + 1, 2);
-                            break;
-                        case 3:
-                            AddCheckBox(hotkeys[hotkey_num].Ctrl, hotkey_num + 1, 3);
-                            break;
-                        case 4:
-                            AddCheckBox(hotkeys[hotkey_num].Shift, hotkey_num + 1, 4);
-                            break;
-                        case 5:
-                            AddCheckBox(hotkeys[hotkey_num].Alt, hotkey_num + 1, 5);
-                            break;
-                    }
-                }                
-            }
+            //doc.ShowFile();
         }
 
         private void button_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             Button button = sender as Button;
-
-            //MessageBox.Show(e.Key.ToString());
-
-            //Dictionary<Key, string> specialKeys = new Dictionary<Key, string>
-            //{
-            //    {Key.PageDown, "PageDown"},
-            //    {Key.PageUp, "PageUp"},
-            //    //{Key.System, "F10"},
-            //    {Key.D0, "0"},
-            //};
 
             if (e.Key == Key.Return)
             {
@@ -144,10 +64,6 @@ namespace civ5_keybinder
                 button.Content = "PageUp";
                 e.Handled = true;
             }
-            //else if (e.Key == Key.Space)
-            //{
-            //    button.Content = "hello";
-            //}
             else
             {
                 if (e.Key.ToString().Length > 1)
@@ -161,22 +77,6 @@ namespace civ5_keybinder
                     e.Handled = true;
                 }
             }
-
-            //if (specialKeys.ContainsKey(e.Key) == true)
-            //{
-            //    button.Content = specialKeys[e.Key];
-            //}
-            //else
-            //{
-            //    if (e.Key.ToString().Length > 1)
-            //    {
-            //        button.Content = e.Key.ToString();
-            //    }
-            //    else
-            //    {
-            //        button.Content = e.Key.ToString().ToUpper();
-            //    }
-            //}
         }
 
         private void button_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)

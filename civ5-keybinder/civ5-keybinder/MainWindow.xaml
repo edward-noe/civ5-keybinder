@@ -24,11 +24,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Margin="0 0 5 5" Name="applyButton" Content="Apply" Click="ApplyButton_Click">
-                    <!--<Button.InputBindings>
-                        <KeyBinding Command="{Binding Path=button_PreviewKeyDown}" Key="A"/>
-                    </Button.InputBindings>-->
-                </Button>
+                <Button Grid.Column="0" Margin="0 0 5 5" Name="applyButton" Content="Apply" Click="ApplyButton_Click"/>
                 <Button Grid.Column="1" Margin="5 0 0 5" Name="resetButton" Content="Reset to Defaults" Click="ResetButton_Click"/>
 
             </Grid>
@@ -36,8 +32,8 @@
             <Grid Grid.Row="1" Margin="5 0 0 0">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="6*"/>
-                    <ColumnDefinition Width="39*"/>
+                    <ColumnDefinition Width="6.5*"/>
+                    <ColumnDefinition Width="38.5*"/>
                     <ColumnDefinition Width="25*"/>
                     <ColumnDefinition Width="10*"/>
                     <ColumnDefinition Width="10*"/>
@@ -56,23 +52,46 @@
 
             <ScrollViewer Grid.Row="2" Margin="5 0 0 0">
 
-                <Grid x:Name="main_grid">
+                <ItemsControl Grid.Row="2" Name="itemsControl">
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="6*"/>
-                        <ColumnDefinition Width="39*"/>
-                        <ColumnDefinition Width="25*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="10*"/>
-                    </Grid.ColumnDefinitions>
+                    <ItemsControl.ItemTemplate>
 
-                </Grid>
+                        <DataTemplate>
+
+                            <Grid>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition MaxHeight="25"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="6*"/>
+                                    <ColumnDefinition Width="39*"/>
+                                    <ColumnDefinition Width="25*"/>
+                                    <ColumnDefinition Width="10*"/>
+                                    <ColumnDefinition Width="10*"/>
+                                    <ColumnDefinition Width="10*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Column="0" Content="{Binding DLC}"/>
+                                <Label Grid.Column="1" Content="{Binding Function}"/>
+                                <Button Grid.Column="2" Height="22" Width="150" Content="{Binding Key}" GotKeyboardFocus="button_GotKeyboardFocus" LostKeyboardFocus="button_LostKeyboardFocus" PreviewKeyDown="button_PreviewKeyDown" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1.5"/>
+                                <CheckBox Grid.Column="3" IsChecked="{Binding Ctrl}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <CheckBox Grid.Column="4" IsChecked="{Binding Shift}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <CheckBox Grid.Column="5" IsChecked="{Binding Alt}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                            </Grid>
+
+                        </DataTemplate>
+
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
 
             </ScrollViewer>
 
         </Grid>
-
+        
     </Border>
     
 </Window>
