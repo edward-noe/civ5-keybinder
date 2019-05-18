@@ -32,12 +32,13 @@
             <Grid Grid.Row="1" Margin="5 0 0 0">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="6.5*"/>
-                    <ColumnDefinition Width="38.5*"/>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="39*"/>
                     <ColumnDefinition Width="25*"/>
                     <ColumnDefinition Width="10*"/>
                     <ColumnDefinition Width="10*"/>
                     <ColumnDefinition Width="10*"/>
+                    <!--Counteracts the effect of the scroll bar in the main grid-->
                     <ColumnDefinition Width="17.5"/>
                 </Grid.ColumnDefinitions>
 
@@ -73,9 +74,10 @@
                                     <ColumnDefinition Width="10*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Label Grid.Column="0" Content="{Binding DLC}"/>
-                                <Label Grid.Column="1" Content="{Binding Function}"/>
-                                <Button Grid.Column="2" Height="22" Width="150" Content="{Binding Key}" GotKeyboardFocus="button_GotKeyboardFocus" LostKeyboardFocus="button_LostKeyboardFocus" PreviewKeyDown="button_PreviewKeyDown" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1.5"/>
+                                <!--Margin removes part of the margin automatically added by the ItemsControl-->
+                                <Label Grid.Column="0" Content="{Binding DLC}" Margin="-5 0 0 0"/>
+                                <Label Grid.Column="1" Content="{Binding Function}" Margin="-5 0 0 0"/>
+                                <Button Grid.Column="2" Height="22" Width="150" Content="{Binding Key}" GotKeyboardFocus="Button_GotKeyboardFocus" LostKeyboardFocus="Button_LostKeyboardFocus" PreviewKeyDown="Button_PreviewKeyDown" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1.5"/>
                                 <CheckBox Grid.Column="3" IsChecked="{Binding Ctrl}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 <CheckBox Grid.Column="4" IsChecked="{Binding Shift}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 <CheckBox Grid.Column="5" IsChecked="{Binding Alt}" HorizontalAlignment="Center" VerticalAlignment="Center"/>

@@ -8,6 +8,7 @@ namespace civ5_keybinder
 {
     public class Hotkey
     {
+        public int ID { get; }
         public int File { get; }
         public string DLC { get; }
         public string Function { get; }
@@ -16,8 +17,9 @@ namespace civ5_keybinder
         public bool Shift { get; set; }
         public bool Alt { get; set; }
 
-        public Hotkey(int defFile, int defDLC, string defFunction, string defKey, bool defCtrl, bool defShift, bool defAlt)
+        public Hotkey(int defID, int defFile, int defDLC, string defFunction, string defKey, bool defCtrl, bool defShift, bool defAlt)
         {
+            ID = defID;
             File = defFile;
             switch (defDLC)
             {
