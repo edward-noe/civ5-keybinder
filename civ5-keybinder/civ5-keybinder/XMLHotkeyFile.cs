@@ -67,21 +67,23 @@ namespace civ5_keybinder
 
             foreach (XmlNode row in DocumentElement.ChildNodes[2])
             {
-                // Determines the hotkey it needs to modify
-                int ID = nameDict[row.SelectSingleNode("Type").InnerText];
+                //// Determines the hotkey it needs to modify
+                //int ID = nameDict[row.SelectSingleNode("Type").InnerText];
 
-                // Creates new hotkey based on node info
-                //hotkeys.Add(ID, new Hotkey(fileNum, 0, MainWindow.Hotkeys[ID].Function, row.SelectSingleNode("HotKey").InnerText, row.));
+                //// Creates new hotkey based on node info
+                ////hotkeys.Add(ID, new Hotkey(fileNum, 0, MainWindow.Hotkeys[ID].Function, row.SelectSingleNode("HotKey").InnerText, row.));
 
-                hotkeys.Add(new Hotkey(
-                    ID,
-                    fileNum,
-                    0,
-                    MainWindow.Hotkeys[ID].Function, // how does this even work?
-                    GetKey(row.SelectSingleNode("HotKey").InnerText),
-                    false,
-                    false,
-                    false));
+                //hotkeys.Add(new Hotkey(
+                //    ID,
+                //    fileNum,
+                //    0,
+                //    MainWindow.Hotkeys[ID].Function, // how does this even work?
+                //    GetKey(row.SelectSingleNode("HotKey").InnerText),
+                //    false,
+                //    false,
+                //    false));
+
+                
             }
 
             return hotkeys;
