@@ -67,11 +67,13 @@ namespace civ5_keybinder
 
             //// Sets the source of data for ItemControl element to values of hotkeys dictionary
             //itemsControl.ItemsSource = sortedHotkeys;
+
+            DisplayHotkeys(doc.GetHotkeys(0));
         }
 
         public void DisplayHotkeys(List<Hotkey> hotkeys)
         {
-            // TO DO: Sort hotkeys by ID or other system
+            // TO DO: Sort hotkeys by category
 
             List<Hotkey> sortedHotkeys = hotkeys.OrderBy(hotkey => hotkey.ID).ToList(); // Sorts hotkey list by ID
 
@@ -387,8 +389,13 @@ namespace civ5_keybinder
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            Hotkey hotkey = (Hotkey)itemsControl.Items[0];
-            MessageBox.Show(hotkey.Key);
+            //Hotkey hotkey = (Hotkey)itemsControl.Items[0];
+            //MessageBox.Show(hotkey.Key);
+
+            HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("HotkeyData.xml");
+
+            MessageBox.Show(hotkeyDataFile.GetStringAttribute("Function", "BUILD_ROAD"));
+
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)

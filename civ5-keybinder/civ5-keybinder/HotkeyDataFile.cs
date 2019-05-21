@@ -17,10 +17,46 @@ namespace civ5_keybinder
             XmlReader reader = XmlReader.Create(filePath, settings);
             Load(reader);
         }
-        
-        public string GetFunction(string hotkeyName)
+
+        public int GetIntAttribute(string attribute, string hotkeyName)
         {
-            return "hello";
+            // Selects hotkey node with hotkeyName
+            XmlNode hotkey = SelectSingleNode("//Hotkey[Name =\'" + hotkeyName + "\']");
+
+            // Returns attribute node of hotkey
+            return Int32.Parse(hotkey.SelectSingleNode(attribute).InnerText);
+        }
+        
+        public string GetStringAttribute(string attribute, string hotkeyName)
+        {
+            // Selects hotkey node with hotkeyName
+            XmlNode hotkey = SelectSingleNode("//Hotkey[Name =\'" + hotkeyName + "\']");
+
+            // Returns attribute node of hotkey
+            return hotkey.SelectSingleNode(attribute).InnerText;
+        }
+
+        public bool GetBoolAttribute(string attribute, string hotkeyName)
+        {
+            // Selects hotkey node with hotkeyName
+            XmlNode hotkey = SelectSingleNode("//Hotkey[Name =\'" + hotkeyName + "\']");
+
+            // Returns attribute node of hotkey
+            return Convert.ToBoolean(Convert.ToInt16(hotkey.SelectSingleNode(attribute).InnerText));
+        }
+
+        // Returns list of each hotkey name
+        // Used in XMLHotkeyFile.cs to limit added hotkeys to those in HotkeyData.xml
+        public List<string> GetHotkeyNames()
+        {
+            List<string> names = new List<string>();
+
+            foreach (XmlNode hotkey in DocumentElement)
+            {
+                names.Add(hotkey.SelectSingleNode("Name").InnerText);
+            }
+
+            return names;
         }
 
         public List<Hotkey> GetDefaultHotkeys()
@@ -40,19 +76,6 @@ namespace civ5_keybinder
                     Convert.ToBoolean(Convert.ToInt16(hotkey.SelectSingleNode("Shift").InnerText)),
                     Convert.ToBoolean(Convert.ToInt16(hotkey.SelectSingleNode("Alt").InnerText))));
             }
-
-            //foreach (XmlNode hotkey in DocumentElement.ChildNodes[0])
-            //{
-            //    hotkeys.Add(new Hotkey(
-            //        0,
-            //        "1.1",
-            //        0,
-            //        "hello",
-            //        "K",
-            //        false,
-            //        false,
-            //        false));
-            //}
 
             return hotkeys;
         }

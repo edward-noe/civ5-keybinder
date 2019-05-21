@@ -20,70 +20,34 @@ namespace civ5_keybinder
             Load(reader);
         }
 
-        public void ShowFile()
-        {
-            // Builds.row
-            //MessageBox.Show(DocumentElement.ChildNodes[2].ChildNodes[0].ChildNodes[0].InnerText);
-            //foreach (XmlNode row in DocumentElement.ChildNodes[2])
-            //{
-            //    MessageBox.Show(row.SelectSingleNode("Type").InnerText);
-            //}
-        }
-
         public List<Hotkey> GetHotkeys(int fileNum)
         {
+            // Initializes HotkeyData.xml
+            HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("HotkeyData.xml");
+            // Gets hotkey names from HotkeyData.xml
+            List<string> hotkeyNames = hotkeyDataFile.GetHotkeyNames();
+
+            // Creates list for output
             List<Hotkey> hotkeys = new List<Hotkey>();
 
-            Dictionary<string, int> nameDict = new Dictionary<string, int>
+            foreach (XmlNode hotkey in DocumentElement.ChildNodes[2])
             {
-                // Dictionary that connects in-file hotkey name with ID as created in DefaultHotkeys() in MainWindow.xaml.cs
-                // CIV5Builds.xml base game only
-                {"BUILD_ROAD", 53},
-                {"BUILD_RAILROAD", 54},
-                {"BUILD_FARM", 58},
-                {"BUILD_MINE", 59},
-                {"BUILD_TRADING_POST", 56},
-                {"BUILD_LUMBERMILL", 67},
-                {"BUILD_PASTURE", 62},
-                {"BUILD_CAMP", 57},
-                {"BUILD_PLANTATION", 60},
-                {"BUILD_QUARRY", 61},
-                {"BUILD_WELL", 64},
-                {"BUILD_OFFSHORE_PLATFORM", 65},
-                {"BUILD_FISHING_BOATS", 66},
-                {"BUILD_FORT", 63},
-                {"BUILD_REMOVE_JUNGLE", 50},
-                {"BUILD_REMOVE_FOREST", 49},
-                {"BUILD_REMOVE_MARSH", 51},
-                {"BUILD_SCRUB_FALLOUT", 71},
-                {"BUILD_REPAIR", 70},
-                {"BUILD_REMOVE_ROUTE", 55},
-                {"BUILD_LANDMARK", 47},
-                {"BUILD_ACADEMY", 44},
-                {"BUILD_CUSTOMS_HOUSE", 42},
-                {"BUILD_MANUFACTORY", 46},
-                {"BUILD_CITADEL", 43},
-            };
+                string hotkeyName = hotkey.SelectSingleNode("Type").InnerText;
 
-            foreach (XmlNode row in DocumentElement.ChildNodes[2])
-            {
-                //// Determines the hotkey it needs to modify
-                //int ID = nameDict[row.SelectSingleNode("Type").InnerText];
-
-                //// Creates new hotkey based on node info
-                ////hotkeys.Add(ID, new Hotkey(fileNum, 0, MainWindow.Hotkeys[ID].Function, row.SelectSingleNode("HotKey").InnerText, row.));
-
-                //hotkeys.Add(new Hotkey(
-                //    ID,
-                //    fileNum,
-                //    0,
-                //    MainWindow.Hotkeys[ID].Function, // how does this even work?
-                //    GetKey(row.SelectSingleNode("HotKey").InnerText),
-                //    false,
-                //    false,
-                //    false));
-
-                
+                // Checks to ensure that hotkey in file is in HotkeyData.xml
+                if (hotkeyNames.Contains(hotkeyName))
+                {
+                    hotkeys.Add(new Hotkey(
+                        hotkey.SelectSingleNode("Type").InnerText, 
+                        hotkeyDataFile.GetIntAttribute("ID", hotkeyName), // Consults HotkeyData.xml to determine ID and other attributes
+                        hotkeyDataFile.GetStringAttribute("File", hotkeyName),
+                        hotkeyDataFile.GetIntAttribute("DLC", hotkeyName),
+                        hotkeyDataFile.GetStringAttribute("Function", hotkeyName),
+                        hotkey.SelectSingleNode("HotKey").InnerText,
+                        hotkeyDataFile.GetBoolAttribute("Ctrl", hotkeyName),
+                        hotkeyDataFile.GetBoolAttribute("Shift", hotkeyName),
+                        hotkeyDataFile.GetBoolAttribute("Alt", hotkeyName)));
+                }
             }
 
             return hotkeys;
