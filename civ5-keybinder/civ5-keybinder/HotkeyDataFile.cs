@@ -12,8 +12,8 @@ namespace civ5_keybinder
     {
         public HotkeyDataFile(string filePath)
         {
+            // Reads HotkeyData.xml
             XmlReaderSettings settings = new XmlReaderSettings();
-
             XmlReader reader = XmlReader.Create(filePath, settings);
             Load(reader);
         }
