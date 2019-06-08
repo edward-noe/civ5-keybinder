@@ -34,7 +34,14 @@ namespace civ5_keybinder
 
             foreach (XMLHotkeyFile file in Files)
             {
-                hotkeys.AddRange(file.GetHotkeys());
+                foreach (Hotkey hotkey in file.GetHotkeys())
+                {
+                    // Checks to ensure there is not already a hotkey with the same Name attribute
+                    if (hotkeys.Any(item => item.Name == hotkey.Name) == false)
+                    {
+                        hotkeys.Add(hotkey);
+                    }
+                }
             }
 
             return hotkeys;

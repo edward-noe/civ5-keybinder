@@ -11,7 +11,7 @@ namespace civ5_keybinder
 {
     class XMLHotkeyFile : XmlDocument
     {
-        public static Dictionary<string, string> userToFileFormatKeyDict { get; } = new Dictionary<string, string>
+        public static Dictionary<string, string> UserToFileFormatKeyDict { get; } = new Dictionary<string, string>
         {
             // TODO: Update dictionary to include more keys
             {"KB_RETURN", "Enter" },
@@ -20,17 +20,13 @@ namespace civ5_keybinder
             {"KB_SPACE", "Space" },
             {"KB_BACKSPACE", "Backspace" },
             {"KB_DELETE", "Delete" },
-            {"KB_SEMICOLON", "Semicolon" },
+            {"KB_SEMICOLON", ";" },
+            {"KB_COMMA", "," },
+            {"KB_SLASH", "/" }
         };
 
-        public string hotkeyType { get; }
+        public string HotkeyType { get; }
 
-        // File 1 (Mandatory): Base file
-        // File 2 (Optional): Expansion1 base file
-        // File 3 (Optional): Expansion2 base file
-        // File 4 (Optional) (only used by Builds): Expansion1 file inhereted from base
-        // File 5 (Optional) (only used by Builds): Expansion2 file inhereted from base
-        // File 6 (Optional) (only used by Builds): Expansion2 file inhereted from Expansion1
         public XMLHotkeyFile(string filePath)
         {
             // Ignores comments and reads file
@@ -40,14 +36,26 @@ namespace civ5_keybinder
             Load(reader);
 
             // Finds kotkeyType by parsing file name
-            // Substring(4) returns string after CIV5; ex. CIV5Builds returns Builds
-            hotkeyType = System.IO.Path.GetFileNameWithoutExtension(filePath).Substring(4);
+            HotkeyType = System.IO.Path.GetFileNameWithoutExtension(filePath);
+            if (HotkeyType.Contains("_"))
+            {
+                // Finds index of first "_" character
+                int index = HotkeyType.IndexOf("_");
+                // Substring(4, index) returns string after CIV5 and excluding text after "_"; ex. CIV5Builds_Inherited_Expansion2 returns Builds
+                HotkeyType = HotkeyType.Substring(4, index - 4);
+            }
+            else
+            {
+                // Substring(4) returns string after CIV5; ex. CIV5Builds returns Builds
+                HotkeyType = HotkeyType.Substring(4);
+            }
         }
 
         public List<Hotkey> GetHotkeys()
         {
             // Initializes HotkeyData.xml
             HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("HotkeyData.xml");
+
             // Gets hotkey names from HotkeyData.xml
             List<string> hotkeyNames = hotkeyDataFile.GetHotkeyNames();
 
@@ -55,7 +63,7 @@ namespace civ5_keybinder
             List<Hotkey> hotkeys = new List<Hotkey>();
 
             // Selects hotkeyType node to accomodate different file configurations
-            foreach (XmlNode hotkey in DocumentElement.SelectSingleNode("/GameData/" + hotkeyType))
+            foreach (XmlNode hotkey in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType))
             {
                 string hotkeyName = hotkey.SelectSingleNode("Type").InnerText;
 
@@ -87,9 +95,9 @@ namespace civ5_keybinder
 
         public string ConvertFileToUserFormat(string fileFormat)
         {
-            if (userToFileFormatKeyDict.ContainsKey(fileFormat))
+            if (UserToFileFormatKeyDict.ContainsKey(fileFormat))
             {
-                return userToFileFormatKeyDict[fileFormat];
+                return UserToFileFormatKeyDict[fileFormat];
             }
             else
             {

@@ -9,7 +9,7 @@ namespace civ5_keybinder
     public class Hotkey
     {
         public string Name { get; }
-        public int ID { get; }
+        public int ID { get; } // Used to order hotkeys in MainWindow
         public string File { get; }
         public string DLC { get; }
         public string Function { get; }

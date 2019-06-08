@@ -57,30 +57,37 @@ namespace civ5_keybinder
         {
             InitializeComponent();
 
-            //XMLHotkeyFile doc = new XMLHotkeyFile("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml");
-            //XMLHotkeyFile doc1 = new XMLHotkeyFile("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\2-InterfaceModes\\Base\\CIV5InterfaceModes.xml");
-
-            //Hotkeys.AddRange(doc.GetHotkeys());
-            //Hotkeys.AddRange(doc1.GetHotkeys());
-
-            //Hotkeys = SortHotkeys(Hotkeys);
-
-            //NewHotkeys = Hotkeys;
-
-            //itemsControl.ItemsSource = Hotkeys;
-
-            XMLHotkeyGroup group1 = new XMLHotkeyGroup("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml");
+            // Imports documents as XMLHotkeyGroups
+            XMLHotkeyGroup group1 = new XMLHotkeyGroup(
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml",
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion\\CIV5Builds_Expansion.xml",
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds_Expansion2.xml",
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion\\CIV5Builds.xml",
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds.xml",
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds_Inherited_Expansion2.xml");
             XMLHotkeyGroup group2 = new XMLHotkeyGroup("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\2-InterfaceModes\\Base\\CIV5InterfaceModes.xml");
-            XMLHotkeyGroup group8 = new XMLHotkeyGroup("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\8-Controls-\\Base\\CIV5Controls.xml",
+            XMLHotkeyGroup group3 = new XMLHotkeyGroup("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\3-Automates\\CIV5Automates.xml");
+            XMLHotkeyGroup group4 = new XMLHotkeyGroup("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\4-Commands\\CIV5Commands.xml");
+            XMLHotkeyGroup group5 = new XMLHotkeyGroup(
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\5-Missions-\\Base\\CIV5Missions.xml",
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\5-Missions-\\Expansion\\CIV5Missions.xml",
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\5-Missions-\\Expansion2\\CIV5Missions.xml");
+            XMLHotkeyGroup group8 = new XMLHotkeyGroup(
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\8-Controls-\\Base\\CIV5Controls.xml",
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\8-Controls-\\Expansion\\CIV5Controls.xml",
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\8-Controls-\\Expansion2\\CIV5Controls.xml");
 
-            //Hotkeys.AddRange(group1.GetHotkeys());
-            //Hotkeys.AddRange(group2.GetHotkeys());
+            // Adds groups to main Hotkey list
+            Hotkeys.AddRange(group1.GetHotkeys());
+            Hotkeys.AddRange(group2.GetHotkeys());
+            Hotkeys.AddRange(group3.GetHotkeys());
+            Hotkeys.AddRange(group4.GetHotkeys());
+            Hotkeys.AddRange(group5.GetHotkeys());
             Hotkeys.AddRange(group8.GetHotkeys());
 
             Hotkeys = SortHotkeys(Hotkeys);
 
+            // Adds Hotkeys list to itemsControl for display
             itemsControl.ItemsSource = Hotkeys;
         }
 
@@ -167,31 +174,16 @@ namespace civ5_keybinder
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            Hotkey hotkey = (Hotkey)itemsControl.Items[FindHotkeyIndex(Hotkeys, "BUILD_ROAD")];
+            // TEST CODE
+            Hotkey hotkey = (Hotkey)itemsControl.Items[FindHotkeyIndex(Hotkeys, "CONTROL_CIVILOPEDIA")];
 
             MessageBox.Show(hotkey.Key);
-
-
-            //itemsControl.TargetUpdated
-            //MessageBox.Show(hotkey.Shift.ToString());
-
-            //HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("HotkeyData.xml");
-
-            //MessageBox.Show(hotkeyDataFile.GetStringAttribute("Function", "BUILD_ROAD"));
-
-            //MessageBox.Show(hotkeys[0].Key);
-
-            //https://stackoverflow.com/questions/2785044/twoway-binding-with-itemscontrol
-
-            //foreach(Hotkey hotkey in itemsControl.Items)
-            //{
-
-            //}
 
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
+            // TEST CODE
             HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("HotkeyData.xml");
 
             List<Hotkey> list = new List<Hotkey>();
