@@ -50,14 +50,4 @@ namespace civ5_keybinder
             Alt = defAlt;
         }
     }
-
-    //public class HotkeyString
-    //{
-    //    public string Name { get; set; }
-
-    //    public HotkeyString(string defName)
-    //    {
-    //        Name = defName;
-    //    }
-    //}
 }

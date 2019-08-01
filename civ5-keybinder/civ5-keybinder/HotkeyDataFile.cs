@@ -24,9 +24,9 @@ namespace civ5_keybinder
             XmlNode hotkey = SelectSingleNode("//Hotkey[Name =\'" + hotkeyName + "\']");
 
             // Returns attribute node of hotkey
-            return Int32.Parse(hotkey.SelectSingleNode(attribute).InnerText);
+            return int.Parse(hotkey.SelectSingleNode(attribute).InnerText);
         }
-        
+
         public string GetStringAttribute(string attribute, string hotkeyName)
         {
             // Selects hotkey node with hotkeyName
@@ -67,9 +67,9 @@ namespace civ5_keybinder
             {
                 hotkeys.Add(new Hotkey(
                     hotkey.SelectSingleNode("Name").InnerText,
-                    Int32.Parse(hotkey.SelectSingleNode("ID").InnerText),
+                    int.Parse(hotkey.SelectSingleNode("ID").InnerText),
                     hotkey.SelectSingleNode("File").InnerText,
-                    Int32.Parse(hotkey.SelectSingleNode("DLC").InnerText),
+                    int.Parse(hotkey.SelectSingleNode("DLC").InnerText),
                     hotkey.SelectSingleNode("Function").InnerText,
                     hotkey.SelectSingleNode("Key").InnerText,
                     Convert.ToBoolean(Convert.ToInt16(hotkey.SelectSingleNode("Ctrl").InnerText)),

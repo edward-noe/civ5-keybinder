@@ -27,6 +27,8 @@ namespace civ5_keybinder
 
         public string HotkeyType { get; }
 
+        HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
+
         public XMLHotkeyFile(string filePath)
         {
             // Ignores comments and reads file
@@ -54,7 +56,7 @@ namespace civ5_keybinder
         public List<Hotkey> GetHotkeys()
         {
             // Initializes HotkeyData.xml
-            HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("HotkeyData.xml");
+            
 
             // Gets hotkey names from HotkeyData.xml
             List<string> hotkeyNames = hotkeyDataFile.GetHotkeyNames();
@@ -88,9 +90,10 @@ namespace civ5_keybinder
             return hotkeys;
         }
 
-        public void SetHotkeys(List<Hotkey> hotkeys)
+        public void SetHotkey(Hotkey hotkey)
         {
-            ;
+            XmlNode firstNode = SelectSingleNode("/GameData/" + HotkeyType);
+            XmlNode node = firstNode.SelectSingleNode(hotkeyDataFile.GetStringAttribute("Name", hotkey.Name));
         }
 
         public string ConvertFileToUserFormat(string fileFormat)
@@ -106,9 +109,9 @@ namespace civ5_keybinder
             }
         }
 
-        public string GetKey(string key)
+        public string ConvertUserToFileFormat(string userFormat)
         {
-            return key[3].ToString();
+            return "hello world";
         }
     }
 }

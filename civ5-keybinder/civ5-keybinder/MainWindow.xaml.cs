@@ -13,8 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using System.Xml;
-
 namespace civ5_keybinder
 {
     /// <summary>
@@ -28,7 +26,12 @@ namespace civ5_keybinder
         // List containing changes to a copy of Hotkeys
         public List<Hotkey> NewHotkeys { get; set; } = new List<Hotkey>();
 
-        public static Dictionary<string, string> keyDict { get; } = new Dictionary<string, string>
+        // List containing HotkeyGroups
+        Dictionary<int, XMLHotkeyGroup> Groups = new Dictionary<int, XMLHotkeyGroup>();
+
+        HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
+
+        public static Dictionary<string, string> KeyDict { get; } = new Dictionary<string, string>
         {
             {"Oem1", ";"},
             {"Oem3", "`"},
@@ -57,33 +60,42 @@ namespace civ5_keybinder
         {
             InitializeComponent();
 
+            GetHotkeys();
+        }
+
+        public void GetHotkeys()
+        {
             // Imports documents as XMLHotkeyGroups
-            XMLHotkeyGroup group1 = new XMLHotkeyGroup(
+            Groups.Add(1, new XMLHotkeyGroup(
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml",
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion\\CIV5Builds_Expansion.xml",
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds_Expansion2.xml",
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion\\CIV5Builds.xml",
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds.xml",
-                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds_Inherited_Expansion2.xml");
-            XMLHotkeyGroup group2 = new XMLHotkeyGroup("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\2-InterfaceModes\\Base\\CIV5InterfaceModes.xml");
-            XMLHotkeyGroup group3 = new XMLHotkeyGroup("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\3-Automates\\CIV5Automates.xml");
-            XMLHotkeyGroup group4 = new XMLHotkeyGroup("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\4-Commands\\CIV5Commands.xml");
-            XMLHotkeyGroup group5 = new XMLHotkeyGroup(
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds_Inherited_Expansion2.xml"));
+            Groups.Add(2, new XMLHotkeyGroup(
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\2-InterfaceModes\\Base\\CIV5InterfaceModes.xml"));
+            Groups.Add(3, new XMLHotkeyGroup(
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\3-Automates\\CIV5Automates.xml"));
+            Groups.Add(4, new XMLHotkeyGroup(
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\4-Commands\\CIV5Commands.xml"));
+            Groups.Add(5, new XMLHotkeyGroup(
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\5-Missions-\\Base\\CIV5Missions.xml",
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\5-Missions-\\Expansion\\CIV5Missions.xml",
-                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\5-Missions-\\Expansion2\\CIV5Missions.xml");
-            XMLHotkeyGroup group8 = new XMLHotkeyGroup(
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\5-Missions-\\Expansion2\\CIV5Missions.xml"));
+
+            // TODO: Add support for LUA hotkeys
+
+            Groups.Add(8, new XMLHotkeyGroup(
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\8-Controls-\\Base\\CIV5Controls.xml",
                 "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\8-Controls-\\Expansion\\CIV5Controls.xml",
-                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\8-Controls-\\Expansion2\\CIV5Controls.xml");
+                "C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\8-Controls-\\Expansion2\\CIV5Controls.xml"));
 
             // Adds groups to main Hotkey list
-            Hotkeys.AddRange(group1.GetHotkeys());
-            Hotkeys.AddRange(group2.GetHotkeys());
-            Hotkeys.AddRange(group3.GetHotkeys());
-            Hotkeys.AddRange(group4.GetHotkeys());
-            Hotkeys.AddRange(group5.GetHotkeys());
-            Hotkeys.AddRange(group8.GetHotkeys());
+            foreach(var item in Groups)
+            {
+                Hotkeys.AddRange(item.Value.GetHotkeys());
+            }
 
             Hotkeys = SortHotkeys(Hotkeys);
 
@@ -107,17 +119,11 @@ namespace civ5_keybinder
 
         private void Button_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            //void UpdateNewHotkeysDictionary(string key)
-            //{
-            //    Hotkey hotkey = (Hotkey)itemsControl.Items[0];
-            //    hotkey.Key = e.Key.ToString().ToUpper();
-            //}
-
             Button button = sender as Button;
 
-            if (keyDict.ContainsKey(e.Key.ToString()))
+            if (KeyDict.ContainsKey(e.Key.ToString()))
             {
-                button.Content = keyDict[e.Key.ToString()];
+                button.Content = KeyDict[e.Key.ToString()];
             }
             else if (e.Key == Key.Return)
             {
@@ -150,14 +156,12 @@ namespace civ5_keybinder
                 else
                 {
                     button.Content = e.Key.ToString().ToUpper();
-                    //Hotkey hotkey = (Hotkey)itemsControl.Items[0];
-                    //hotkey.Key = e.Key.ToString().ToUpper();
-                    //UpdateNewHotkeysDictionary(button.Content.ToString());
                     e.Handled = true;
                 }
             }
         }
 
+        // Changes appearance of button
         private void Button_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             Button button = sender as Button;
@@ -175,34 +179,43 @@ namespace civ5_keybinder
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             // TEST CODE
-            Hotkey hotkey = (Hotkey)itemsControl.Items[FindHotkeyIndex(Hotkeys, "CONTROL_CIVILOPEDIA")];
+            //Hotkey hotkey = (Hotkey)itemsControl.Items[FindHotkeyIndex(Hotkeys, "CONTROL_CIVILOPEDIA")];
 
-            MessageBox.Show(hotkey.Key);
+            //MessageBox.Show(hotkey.Key);
 
+            foreach (Hotkey hotkey in itemsControl.Items)
+            {
+                // Begins process of changing hotkey binding if hotkey in Hotkeys differs from hotkeys in itemsControl
+                if (hotkey != Hotkeys.Find(item => item.Name == hotkey.Name))
+                {
+                    int group = hotkeyDataFile.GetStringAttribute("File", hotkey.Name)[0];
+
+                    Groups[group].SetHotkey(hotkey);
+                }
+            }
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            // TEST CODE
-            HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("HotkeyData.xml");
+            //HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
 
-            List<Hotkey> list = new List<Hotkey>();
+            itemsControl.ItemsSource = SortHotkeys(hotkeyDataFile.GetDefaultHotkeys());
 
-            itemsControl.ItemsSource = hotkeyDataFile.GetDefaultHotkeys();
+            // TODO: Change value of hotkey bindings
         }
 
         // Returns index of hotkey in list based on name
         public int FindHotkeyIndex(List<Hotkey> list, string hotkeyName)
         {
-            foreach(Hotkey hotkey in list)
+            foreach (Hotkey hotkey in list)
             {
-                if(hotkey.Name == hotkeyName)
+                if (hotkey.Name == hotkeyName)
                 {
                     return list.IndexOf(hotkey);
                 }
             }
 
-            throw new ArgumentException();
+            throw new ArgumentException(); // Required to complete code path
         }
     }
 }

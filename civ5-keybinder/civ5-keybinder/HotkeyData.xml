@@ -831,7 +831,7 @@
     <File>8.1</File>
     <DLC>0</DLC>
     <Function>End Turn</Function>
-    <Key>Return</Key>
+    <Key>Enter</Key>
     <Ctrl>0</Ctrl>
     <Shift>0</Shift>
     <Alt>0</Alt>
@@ -842,7 +842,7 @@
     <File>8.1</File>
     <DLC>0</DLC>
     <Function>Force End Turn</Function>
-    <Key>Return</Key>
+    <Key>Enter</Key>
     <Ctrl>0</Ctrl>
     <Shift>1</Shift>
     <Alt>0</Alt>
@@ -931,7 +931,7 @@
     <DLC>0</DLC>
     <Function>Civilopedia</Function>
     <Key>F1</Key>
-    <Ctrl>0</Ctrl>
+    <Ctrl>1</Ctrl>
     <Shift>0</Shift>
     <Alt>0</Alt>
   </Hotkey>
