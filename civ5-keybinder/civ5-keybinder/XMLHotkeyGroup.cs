@@ -11,6 +11,7 @@ namespace civ5_keybinder
     {
         List<XMLHotkeyFile> Files { get; set; } = new List<XMLHotkeyFile>();
 
+        // TODO: Create multiple constructors
         // Creates an XMLHotkeyGroup with files 1, 1-3, or 1-6
         // File 1 (Always): Base file
         // File 2 (Sometimes): Expansion1 base file
@@ -48,7 +49,6 @@ namespace civ5_keybinder
                     }
                 }
             }
-
             return hotkeys;
         }
 

@@ -27,13 +27,15 @@ namespace civ5_keybinder
 
         public string HotkeyType { get; }
 
-        HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
+        readonly HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
 
         public XMLHotkeyFile(string filePath)
         {
             // Ignores comments and reads file
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.IgnoreComments = true;
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                IgnoreComments = true
+            };
             XmlReader reader = XmlReader.Create(filePath, settings);
             Load(reader);
 
@@ -43,7 +45,7 @@ namespace civ5_keybinder
             {
                 // Finds index of first "_" character
                 int index = HotkeyType.IndexOf("_");
-                // Substring(4, index) returns string after CIV5 and excluding text after "_"; ex. CIV5Builds_Inherited_Expansion2 returns Builds
+                // Substring(4, index - 4) returns string after CIV5 and excluding text after "_"; ex. CIV5Builds_Inherited_Expansion2 returns Builds
                 HotkeyType = HotkeyType.Substring(4, index - 4);
             }
             else
@@ -55,9 +57,6 @@ namespace civ5_keybinder
 
         public List<Hotkey> GetHotkeys()
         {
-            // Initializes HotkeyData.xml
-            
-
             // Gets hotkey names from HotkeyData.xml
             List<string> hotkeyNames = hotkeyDataFile.GetHotkeyNames();
 
@@ -65,35 +64,50 @@ namespace civ5_keybinder
             List<Hotkey> hotkeys = new List<Hotkey>();
 
             // Selects hotkeyType node to accomodate different file configurations
-            foreach (XmlNode hotkey in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType))
+            foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType))
             {
-                string hotkeyName = hotkey.SelectSingleNode("Type").InnerText;
+                string hotkeyName = node.SelectSingleNode("Type").InnerText;
 
                 // Checks to ensure that hotkey in file is in HotkeyData.xml
                 if (hotkeyNames.Contains(hotkeyName))
                 {
                     hotkeys.Add(new Hotkey(
-                        hotkey.SelectSingleNode("Type").InnerText,
+                        node.SelectSingleNode("Type").InnerText,
                         // Consults HotkeyData.xml to determine ID and other attributes
                         hotkeyDataFile.GetIntAttribute("ID", hotkeyName), 
                         hotkeyDataFile.GetStringAttribute("File", hotkeyName),
                         hotkeyDataFile.GetIntAttribute("DLC", hotkeyName),
                         hotkeyDataFile.GetStringAttribute("Function", hotkeyName),
                         // Converts from KB_A format to A format
-                        ConvertFileToUserFormat(hotkey.SelectSingleNode("HotKey").InnerText),
+                        ConvertFileToUserFormat(node.SelectSingleNode("HotKey").InnerText),
                         hotkeyDataFile.GetBoolAttribute("Ctrl", hotkeyName),
                         hotkeyDataFile.GetBoolAttribute("Shift", hotkeyName),
                         hotkeyDataFile.GetBoolAttribute("Alt", hotkeyName)));
                 }
             }
-
             return hotkeys;
         }
 
         public void SetHotkey(Hotkey hotkey)
         {
-            XmlNode firstNode = SelectSingleNode("/GameData/" + HotkeyType);
-            XmlNode node = firstNode.SelectSingleNode(hotkeyDataFile.GetStringAttribute("Name", hotkey.Name));
+            //XmlNode firstNode = SelectSingleNode("/GameData/" + HotkeyType);
+            //XmlNode node = firstNode.SelectSingleNode(hotkeyDataFile.GetStringAttribute("Name", hotkey.Name));
+
+            //XmlNode initialNode = DocumentElement.SelectSingleNode("/GameData/" + HotkeyType);
+            //XmlNode node = initialNode.SelectSingleNode(hotkeyDataFile.GetStringAttribute("Type", hotkey.Name));
+            //XmlNode node = initialNode.SelectSingleNode("Type");
+            //node.SelectSingleNode("Hotkey").InnerText = "hello world";
+
+            //XmlNode node = DocumentElement.SelectSingleNode("/GameData/" + HotkeyType);
+            //XmlNode node2 = node.
+
+            foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType))
+            {
+                if (node.SelectSingleNode("Type").InnerText == hotkey.Name)
+                {
+                    node.SelectSingleNode("HotKey").InnerText = "hello world";
+                }
+            }
         }
 
         public string ConvertFileToUserFormat(string fileFormat)
