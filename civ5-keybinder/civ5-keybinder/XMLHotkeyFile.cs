@@ -11,7 +11,7 @@ namespace civ5_keybinder
 {
     class XMLHotkeyFile : XmlDocument
     {
-        public static Dictionary<string, string> UserToFileFormatKeyDict { get; } = new Dictionary<string, string>
+        private static Dictionary<string, string> UserToFileFormatKeyDict { get; } = new Dictionary<string, string>
         {
             // TODO: Update dictionary to include more keys
             {"KB_RETURN", "Enter" },
@@ -25,21 +25,38 @@ namespace civ5_keybinder
             {"KB_SLASH", "/" }
         };
 
-        public string HotkeyType { get; }
+        private static Dictionary<string, string> FileToUserFormatKeyDict { get; } = new Dictionary<string, string>
+        {
+            {"Enter", "KB_RETURN" },
+            {"Home", "KB_HOME" },
+            {"End", "KB_END" },
+            {"Space", "KB_SPACE" },
+            {"Backspace", "KB_BACKSPACE" },
+            {"Delete", "KB_DELETE" },
+            {";", "KB_SEMICOLON" },
+            {",", "KB_COMMA" },
+            {"/", "KB_SLASH" }
+        };
+
+        private string HotkeyType { get; }
+
+        private string FilePath { get; }
 
         readonly HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
 
         public XMLHotkeyFile(string filePath)
         {
+            FilePath = filePath;
+
             // Ignores comments and reads file
-            XmlReaderSettings settings = new XmlReaderSettings
+            XmlReaderSettings readerSettings = new XmlReaderSettings
             {
                 IgnoreComments = true
             };
-            XmlReader reader = XmlReader.Create(filePath, settings);
+            XmlReader reader = XmlReader.Create(filePath, readerSettings);
             Load(reader);
 
-            // Finds kotkeyType by parsing file name
+            // Finds HotkeyType by parsing file name
             HotkeyType = System.IO.Path.GetFileNameWithoutExtension(filePath);
             if (HotkeyType.Contains("_"))
             {
@@ -105,9 +122,10 @@ namespace civ5_keybinder
             {
                 if (node.SelectSingleNode("Type").InnerText == hotkey.Name)
                 {
-                    node.SelectSingleNode("HotKey").InnerText = "hello world";
+                    node.SelectSingleNode("HotKey").InnerText = ConvertUserToFileFormat(hotkey.Key);
                 }
             }
+            Save(FilePath);
         }
 
         public string ConvertFileToUserFormat(string fileFormat)
@@ -125,7 +143,14 @@ namespace civ5_keybinder
 
         public string ConvertUserToFileFormat(string userFormat)
         {
-            return "hello world";
+            if (FileToUserFormatKeyDict.ContainsKey(userFormat))
+            {
+                return FileToUserFormatKeyDict[userFormat];
+            }
+            else
+            {
+                return "KB_" + userFormat;
+            }
         }
     }
 }

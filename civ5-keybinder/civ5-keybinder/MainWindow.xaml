@@ -24,7 +24,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Margin="0 0 5 5" Name="applyButton" Content="Apply" Click="ApplyButton_Click"/>
+                <Button Grid.Column="0" Margin="0 0 5 5" Name="applyButton" Content="Apply Changes" Click="ApplyButton_Click"/>
                 <Button Grid.Column="1" Margin="5 0 0 5" Name="resetButton" Content="Reset to Defaults" Click="ResetButton_Click"/>
 
             </Grid>

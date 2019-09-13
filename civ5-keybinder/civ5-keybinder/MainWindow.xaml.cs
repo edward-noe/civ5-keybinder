@@ -211,6 +211,8 @@ namespace civ5_keybinder
                     Groups[group].SetHotkey(newHotkey);
                 }
             }
+            // Refreshes list of hotkeys
+            //GetHotkeys();
 
             //foreach (Object ob in itemsControl.Items)
             //{
