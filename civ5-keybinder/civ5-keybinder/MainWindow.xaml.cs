@@ -60,10 +60,11 @@ namespace civ5_keybinder
         {
             InitializeComponent();
 
+            InitializeDocuments();
+
             GetHotkeys();
         }
-
-        public void GetHotkeys()
+        public void InitializeDocuments()
         {
             // Imports documents as XMLHotkeyGroups
             Groups.Add(1, new XMLHotkeyGroup(
@@ -89,6 +90,12 @@ namespace civ5_keybinder
                 "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\8-Controls-\\Expansion2\\CIV5Controls.xml"));
 
             // TODO: Add support for LUA hotkeys
+        }
+        public void GetHotkeys()
+        {
+            // Deletes old elements from lists to prevent duplicate hotkeys
+            OldHotkeys.Clear();
+            NewHotkeys.Clear();
 
             // Adds groups to main Hotkey list
             foreach (var item in Groups)
@@ -100,9 +107,6 @@ namespace civ5_keybinder
 
             OldHotkeys = SortHotkeys(OldHotkeys);
             NewHotkeys = SortHotkeys(NewHotkeys);
-
-            //NewHotkeys = OldHotkeys.GetRange(0, OldHotkeys.Count);
-
 
             // Adds Hotkeys list to itemsControl for display
             itemsControl.ItemsSource = NewHotkeys;
@@ -211,8 +215,8 @@ namespace civ5_keybinder
                     Groups[group].SetHotkey(newHotkey);
                 }
             }
-            // Refreshes list of hotkeys
-            //GetHotkeys();
+            //Refreshes list of hotkeys
+            GetHotkeys();
 
             //foreach (Object ob in itemsControl.Items)
             //{
