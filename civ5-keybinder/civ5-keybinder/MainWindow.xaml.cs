@@ -24,15 +24,13 @@ namespace civ5_keybinder
         public List<Hotkey> Hotkeys { get; set; } = new List<Hotkey>();
 
         // List of modified hotkeys
-        public Dictionary<int, bool> ModifiedHotkeys { get; set; }
-
-        // List containing changes to a copy of Hotkeys
-        public List<Hotkey> NewHotkeys { get; set; } = new List<Hotkey>();
+        public Dictionary<string, bool> ModifiedHotkeys { get; set; }
 
         // List containing HotkeyGroups
         Dictionary<int, XMLHotkeyGroup> Groups = new Dictionary<int, XMLHotkeyGroup>();
         
-        readonly HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
+        // TODO: Move to InitializeDocuments function
+        public static readonly HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
 
         public static Dictionary<string, string> KeyDict { get; } = new Dictionary<string, string>
         {
@@ -99,7 +97,13 @@ namespace civ5_keybinder
 
         public void InitializeDictionary()
         {
-            ModifiedHotkeys = hotkeyDataFile.GetIDDictionary();
+            ModifiedHotkeys = new Dictionary<string, bool>();
+
+            List<string> list = hotkeyDataFile.GetHotkeyNames();
+            foreach (string name in list)
+            {
+                ModifiedHotkeys.Add(name, false);
+            }
         }
 
         public void GetHotkeys()
@@ -117,6 +121,31 @@ namespace civ5_keybinder
             itemsControl.ItemsSource = SortHotkeys(Hotkeys);
         }
 
+        public void UpdateHotkeys()
+        {
+            List<string> hotkeyNames = new List<string>();
+
+            foreach (KeyValuePair<string, bool> pair in ModifiedHotkeys)
+            {
+                if (pair.Value == true)
+                {
+                    hotkeyNames.Add(pair.Key);
+                }
+            }
+
+            foreach (string name in hotkeyNames)
+            {
+                int groupNumber = int.Parse(hotkeyDataFile.GetStringAttribute("File", name).ToCharArray()[0].ToString());
+
+                Hotkey hotkey = Hotkeys.Find(item => item.Name == name);
+
+                if (Groups.TryGetValue(groupNumber, out XMLHotkeyGroup group))
+                {
+                    hotkey = group.GetHotkey(name);
+                }
+            }
+        }
+
         public List<Hotkey> SortHotkeys(List<Hotkey> hotkeys)
         {
             // TODO: Sort hotkeys by category
@@ -128,43 +157,25 @@ namespace civ5_keybinder
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            //for (int i = 0; i < itemsControl.Items.Count; i++)
-            //{
-            //    Hotkey newHotkey = (Hotkey)itemsControl.Items[i];
-            //    Hotkey oldHotkey = OldHotkeys.Find(item => item.Name == newHotkey.Name);
-
-            //    if (newHotkey.Key != oldHotkey.Key || newHotkey.Ctrl != oldHotkey.Ctrl || newHotkey.Shift != oldHotkey.Shift || newHotkey.Alt != oldHotkey.Alt)
-            //    {
-            //        // Converts file string to char and then int
-            //        char groupChar = newHotkey.File[0];
-            //        int group = int.Parse(groupChar.ToString());
-
-            //        Groups[group].SetHotkey(newHotkey);
-            //    }
-            //}
-
             for (int i = 0; i < itemsControl.Items.Count; i++)
             {
                 Hotkey hotkey = (Hotkey)itemsControl.Items[i];
-                if (ModifiedHotkeys.TryGetValue(hotkey.ID, out bool output))
+                if (ModifiedHotkeys.TryGetValue(hotkey.Name, out bool output))
                 {
                     if (output)
                     {
-                        // TODO: Change File parameter to be an int
                         // Converts file string to char and then int
                         char groupChar = hotkey.File[0];
                         int group = int.Parse(groupChar.ToString());
 
                         Groups[group].SetHotkey(hotkey);
 
-                        ModifiedHotkeys[hotkey.ID] = false;
+                        ModifiedHotkeys[hotkey.Name] = false;
                     }
                 }
             }
-
-            // TODO: Remove this
             //Refreshes list of hotkeys
-            GetHotkeys();
+            UpdateHotkeys();
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -220,8 +231,8 @@ namespace civ5_keybinder
                 }
             }
 
-            // Updates ModifiedHotkeys dictionary
-            ModifiedHotkeys[((Hotkey)button.DataContext).ID] = true;
+            // Updates ModifiedHotkeys dictionary using DataContext
+            ModifiedHotkeys[((Hotkey)button.DataContext).Name] = true;
         }
 
         // Changes appearance of button

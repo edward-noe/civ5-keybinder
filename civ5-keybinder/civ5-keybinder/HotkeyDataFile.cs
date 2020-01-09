@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace civ5_keybinder
 {
-    class HotkeyDataFile : XmlDocument
+    public class HotkeyDataFile : XmlDocument
     {
         public HotkeyDataFile(string filePath)
         {
@@ -42,7 +42,7 @@ namespace civ5_keybinder
             XmlNode hotkey = SelectSingleNode("//Hotkey[Name =\'" + hotkeyName + "\']");
 
             // Returns attribute node of hotkey
-            return Convert.ToBoolean(Convert.ToInt16(hotkey.SelectSingleNode(attribute).InnerText));
+            return Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode(attribute).InnerText));
         }
 
         // Returns list of each hotkey name
@@ -72,9 +72,9 @@ namespace civ5_keybinder
                     int.Parse(hotkey.SelectSingleNode("DLC").InnerText),
                     hotkey.SelectSingleNode("Function").InnerText,
                     hotkey.SelectSingleNode("Key").InnerText,
-                    Convert.ToBoolean(Convert.ToInt16(hotkey.SelectSingleNode("Ctrl").InnerText)),
-                    Convert.ToBoolean(Convert.ToInt16(hotkey.SelectSingleNode("Shift").InnerText)),
-                    Convert.ToBoolean(Convert.ToInt16(hotkey.SelectSingleNode("Alt").InnerText))));
+                    Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Ctrl").InnerText)),
+                    Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Shift").InnerText)),
+                    Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Alt").InnerText))));
             }
 
             return hotkeys;

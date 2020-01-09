@@ -19,14 +19,27 @@ namespace civ5_keybinder
         // File 4 (Sometimes) (only used by Builds): Expansion1 file inhereted from base
         // File 5 (Sometimes) (only used by Builds): Expansion2 file inhereted from base
         // File 6 (Sometimes) (only used by Builds): Expansion2 file inhereted from Expansion1
-        public XMLHotkeyGroup(string file1Path, string file2Path = "", string file3Path = "", string file4Path = "", string file5Path = "", string file6Path = "")
+        public XMLHotkeyGroup(string file1Path)
         {
             Files.Add(new XMLHotkeyFile(file1Path));
-            if (file2Path != "") { Files.Add(new XMLHotkeyFile(file2Path)); }
-            if (file3Path != "") { Files.Add(new XMLHotkeyFile(file3Path)); }
-            if (file4Path != "") { Files.Add(new XMLHotkeyFile(file4Path)); }
-            if (file5Path != "") { Files.Add(new XMLHotkeyFile(file5Path)); }
-            if (file6Path != "") { Files.Add(new XMLHotkeyFile(file6Path)); }
+        }
+
+        public XMLHotkeyGroup(string file1Path, string file2Path, string file3Path)
+        {
+            // TODO: Make this a for loop or something
+            Files.Add(new XMLHotkeyFile(file1Path));
+            Files.Add(new XMLHotkeyFile(file2Path));
+            Files.Add(new XMLHotkeyFile(file3Path));
+        }
+
+        public XMLHotkeyGroup(string file1Path, string file2Path, string file3Path, string file4Path, string file5Path, string file6Path)
+        {
+            Files.Add(new XMLHotkeyFile(file1Path));
+            Files.Add(new XMLHotkeyFile(file2Path));
+            Files.Add(new XMLHotkeyFile(file3Path));
+            Files.Add(new XMLHotkeyFile(file4Path));
+            Files.Add(new XMLHotkeyFile(file5Path));
+            Files.Add(new XMLHotkeyFile(file6Path));
         }
 
         public List<Hotkey> GetHotkeys()
@@ -50,6 +63,38 @@ namespace civ5_keybinder
                 }
             }
             return hotkeys;
+        }
+
+        public Hotkey GetHotkey(string name)
+        {
+            if (Files.Count == 1)
+            {
+                return Files[0].GetHotkey(name);
+            }
+            else
+            {
+                List<Hotkey> hotkeys = new List<Hotkey>();
+
+                foreach (XMLHotkeyFile file in Files)
+                {
+                    Hotkey hotkey = file.GetHotkey(name);
+                    if (hotkey != null)
+                    {
+                        hotkeys.Add(hotkey);
+                    }
+                }
+
+                // If hotkeys across files differ, changes Key attribute to an error value
+                if (hotkeys.Any(item => !(item.Equals(hotkeys[0]))))
+                {
+                    foreach (Hotkey hotkey in hotkeys)
+                    {
+                        hotkey.Key = "ERROR: MULTIPLE KEYS";
+                    }
+                    return hotkeys[0];
+                }
+                return hotkeys[0];
+            }
         }
 
         public void SetHotkey(Hotkey hotkey)

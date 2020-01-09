@@ -75,10 +75,8 @@ namespace civ5_keybinder
 
         public List<Hotkey> GetHotkeys()
         {
-            // Gets hotkey names from HotkeyData.xml
             List<string> hotkeyNames = hotkeyDataFile.GetHotkeyNames();
 
-            // Creates list for output
             List<Hotkey> hotkeys = new List<Hotkey>();
 
             // Selects hotkeyType node to accomodate different file configurations
@@ -89,6 +87,7 @@ namespace civ5_keybinder
                 // Checks to ensure that hotkey in file is in HotkeyData.xml
                 if (hotkeyNames.Contains(hotkeyName))
                 {
+                    // TODO: Actually add Ctrl, Alt, and Shift functionality
                     hotkeys.Add(new Hotkey(
                         node.SelectSingleNode("Type").InnerText,
                         // Consults HotkeyData.xml to determine ID and other attributes
@@ -104,6 +103,28 @@ namespace civ5_keybinder
                 }
             }
             return hotkeys;
+        }
+
+        public Hotkey GetHotkey(string name)
+        {
+            foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType)) {
+                if (node.SelectSingleNode("Type").InnerText == name)
+                {
+                    return new Hotkey(
+                        node.SelectSingleNode("Type").InnerText,
+                        // Consults HotkeyData.xml to determine ID and other attributes
+                        hotkeyDataFile.GetIntAttribute("ID", name),
+                        hotkeyDataFile.GetStringAttribute("File", name),
+                        hotkeyDataFile.GetIntAttribute("DLC", name),
+                        hotkeyDataFile.GetStringAttribute("Function", name),
+                        // Converts from KB_A format to A format
+                        ConvertFileToUserFormat(node.SelectSingleNode("HotKey").InnerText),
+                        hotkeyDataFile.GetBoolAttribute("Ctrl", name),
+                        hotkeyDataFile.GetBoolAttribute("Shift", name),
+                        hotkeyDataFile.GetBoolAttribute("Alt", name));
+                }
+            }
+            return null;
         }
 
         public void SetHotkey(Hotkey hotkey)
