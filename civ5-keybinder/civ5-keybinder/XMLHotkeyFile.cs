@@ -42,6 +42,7 @@ namespace civ5_keybinder
 
         private string FilePath { get; }
 
+        // TODO: Rely on MainWindow.hotkeyDataFile
         readonly HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
 
         public XMLHotkeyFile(string filePath)
@@ -107,17 +108,6 @@ namespace civ5_keybinder
 
         public void SetHotkey(Hotkey hotkey)
         {
-            //XmlNode firstNode = SelectSingleNode("/GameData/" + HotkeyType);
-            //XmlNode node = firstNode.SelectSingleNode(hotkeyDataFile.GetStringAttribute("Name", hotkey.Name));
-
-            //XmlNode initialNode = DocumentElement.SelectSingleNode("/GameData/" + HotkeyType);
-            //XmlNode node = initialNode.SelectSingleNode(hotkeyDataFile.GetStringAttribute("Type", hotkey.Name));
-            //XmlNode node = initialNode.SelectSingleNode("Type");
-            //node.SelectSingleNode("Hotkey").InnerText = "hello world";
-
-            //XmlNode node = DocumentElement.SelectSingleNode("/GameData/" + HotkeyType);
-            //XmlNode node2 = node.
-
             foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType))
             {
                 if (node.SelectSingleNode("Type").InnerText == hotkey.Name)

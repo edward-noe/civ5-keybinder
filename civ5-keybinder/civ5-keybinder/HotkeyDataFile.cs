@@ -79,5 +79,17 @@ namespace civ5_keybinder
 
             return hotkeys;
         }
+
+        public Dictionary<int, bool> GetIDDictionary()
+        {
+            Dictionary<int, bool> dictionary = new Dictionary<int, bool>();
+
+            foreach (XmlNode hotkey in DocumentElement)
+            {
+                dictionary.Add(int.Parse(hotkey.SelectSingleNode("ID").InnerText), false);
+            }
+
+            return dictionary;
+        }
     }
 }

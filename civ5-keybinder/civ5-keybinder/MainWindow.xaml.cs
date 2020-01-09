@@ -21,7 +21,10 @@ namespace civ5_keybinder
     public partial class MainWindow : Window
     {
         // Main list containing hotkeys
-        public List<Hotkey> OldHotkeys { get; set; } = new List<Hotkey>();
+        public List<Hotkey> Hotkeys { get; set; } = new List<Hotkey>();
+
+        // List of modified hotkeys
+        public Dictionary<int, bool> ModifiedHotkeys { get; set; }
 
         // List containing changes to a copy of Hotkeys
         public List<Hotkey> NewHotkeys { get; set; } = new List<Hotkey>();
@@ -62,6 +65,8 @@ namespace civ5_keybinder
 
             InitializeDocuments();
 
+            InitializeDictionary();
+
             GetHotkeys();
         }
         public void InitializeDocuments()
@@ -89,27 +94,27 @@ namespace civ5_keybinder
                 "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\8-Controls-\\Expansion\\CIV5Controls.xml",
                 "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\8-Controls-\\Expansion2\\CIV5Controls.xml"));
 
-            // TODO: Add support for LUA hotkeys
+            // TODO: Add support for LUA hotkeys (Groups 6 and 7) 
         }
+
+        public void InitializeDictionary()
+        {
+            ModifiedHotkeys = hotkeyDataFile.GetIDDictionary();
+        }
+
         public void GetHotkeys()
         {
-            // Deletes old elements from lists to prevent duplicate hotkeys
-            OldHotkeys.Clear();
-            NewHotkeys.Clear();
+            // Clears existing list
+            Hotkeys.Clear();
 
-            // Adds groups to main Hotkey list
+            // Adds hotkeys from each group to main Hotkey list
             foreach (var item in Groups)
             {
-                OldHotkeys.AddRange(item.Value.GetHotkeys());
-                // NewHotkeys gets values directly from the group
-                NewHotkeys.AddRange(item.Value.GetHotkeys());
+                Hotkeys.AddRange(item.Value.GetHotkeys());
             }
 
-            OldHotkeys = SortHotkeys(OldHotkeys);
-            NewHotkeys = SortHotkeys(NewHotkeys);
-
             // Adds Hotkeys list to itemsControl for display
-            itemsControl.ItemsSource = NewHotkeys;
+            itemsControl.ItemsSource = SortHotkeys(Hotkeys);
         }
 
         public List<Hotkey> SortHotkeys(List<Hotkey> hotkeys)
@@ -121,10 +126,56 @@ namespace civ5_keybinder
             return sortedHotkeys;
         }
 
-        //public void UpdateNewHotkeys(string hotkey, string defKey, bool defCtrl, bool defShift, bool defAlt)
-        //{
-        //    NewHotkeys.Find(x => x.Name == hotkey).DefineBinding(defKey, defCtrl, defShift, defAlt);
-        //}
+        private void ApplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            //for (int i = 0; i < itemsControl.Items.Count; i++)
+            //{
+            //    Hotkey newHotkey = (Hotkey)itemsControl.Items[i];
+            //    Hotkey oldHotkey = OldHotkeys.Find(item => item.Name == newHotkey.Name);
+
+            //    if (newHotkey.Key != oldHotkey.Key || newHotkey.Ctrl != oldHotkey.Ctrl || newHotkey.Shift != oldHotkey.Shift || newHotkey.Alt != oldHotkey.Alt)
+            //    {
+            //        // Converts file string to char and then int
+            //        char groupChar = newHotkey.File[0];
+            //        int group = int.Parse(groupChar.ToString());
+
+            //        Groups[group].SetHotkey(newHotkey);
+            //    }
+            //}
+
+            for (int i = 0; i < itemsControl.Items.Count; i++)
+            {
+                Hotkey hotkey = (Hotkey)itemsControl.Items[i];
+                if (ModifiedHotkeys.TryGetValue(hotkey.ID, out bool output))
+                {
+                    if (output)
+                    {
+                        // TODO: Change File parameter to be an int
+                        // Converts file string to char and then int
+                        char groupChar = hotkey.File[0];
+                        int group = int.Parse(groupChar.ToString());
+
+                        Groups[group].SetHotkey(hotkey);
+
+                        ModifiedHotkeys[hotkey.ID] = false;
+                    }
+                }
+            }
+
+            // TODO: Remove this
+            //Refreshes list of hotkeys
+            GetHotkeys();
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            //HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
+
+            itemsControl.ItemsSource = SortHotkeys(hotkeyDataFile.GetDefaultHotkeys());
+            //MessageBox.Show((Hotkey)itemsControl.Items[FindHotkeyIndex(OldHotkeys, "CONTROL_CIVILOPEDIA")]);
+
+            // TODO: Change value of hotkey bindings
+        }
 
         private void Button_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -168,6 +219,9 @@ namespace civ5_keybinder
                     e.Handled = true;
                 }
             }
+
+            // Updates ModifiedHotkeys dictionary
+            ModifiedHotkeys[((Hotkey)button.DataContext).ID] = true;
         }
 
         // Changes appearance of button
@@ -183,72 +237,6 @@ namespace civ5_keybinder
             Button button = sender as Button;
             button.Background = (Brush)new BrushConverter().ConvertFrom("#FFDDDDDD");
             button.BorderBrush = (Brush)new BrushConverter().ConvertFrom("#FF707070");
-        }
-
-        public void UpdateNewHotkeys()
-        {
-            //NewHotkeys.Find(x => x.Name == hotkey).DefineBinding(defKey, defCtrl, defShift, defAlt);
-            foreach (Hotkey hotkey in itemsControl.Items)
-            {
-
-            }
-        }
-
-        private void ApplyButton_Click(object sender, RoutedEventArgs e)
-        {
-            // TEST CODE: Works
-            //Hotkey hotkey = (Hotkey)itemsControl.Items[FindHotkeyIndex(OldHotkeys, "CONTROL_CIVILOPEDIA")];
-
-            //MessageBox.Show(hotkey.Key);
-
-            for (int i = 0; i < itemsControl.Items.Count; i++)
-            {
-                Hotkey newHotkey = (Hotkey)itemsControl.Items[i];
-                Hotkey oldHotkey = OldHotkeys.Find(item => item.Name == newHotkey.Name);
-
-                if (newHotkey.Key != oldHotkey.Key || newHotkey.Ctrl != oldHotkey.Ctrl || newHotkey.Shift != oldHotkey.Shift || newHotkey.Alt != oldHotkey.Alt)
-                {
-                    // Converts file string to char and then int
-                    char groupChar = newHotkey.File[0];
-                    int group = int.Parse(groupChar.ToString());
-
-                    Groups[group].SetHotkey(newHotkey);
-                }
-            }
-            //Refreshes list of hotkeys
-            GetHotkeys();
-
-            //foreach (Object ob in itemsControl.Items)
-            //{
-            //    Hotkey hotkey = (Hotkey)ob;
-            //    if (hotkey.Key != OldHotkeys.Find(item => item.Name == hotkey.Name).Key)
-            //    {
-            //        MessageBox.Show("hello world");
-            //    }
-            //}
-
-            //foreach (Hotkey hotkey in itemsControl.Items)
-            //{
-            //    // Begins process of changing hotkey binding if hotkey in Hotkeys differs from hotkeys in itemsControl
-            //    if (hotkey != OldHotkeys.Find(item => item.Name == hotkey.Name))
-            //    {
-            //        MessageBox.Show("hello world");
-
-            //        int group = hotkeyDataFile.GetStringAttribute("File", hotkey.Name)[0];
-
-            //        Groups[group].SetHotkey(hotkey);
-            //    }
-            //}
-        }
-
-        private void ResetButton_Click(object sender, RoutedEventArgs e)
-        {
-            //HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
-
-            itemsControl.ItemsSource = SortHotkeys(hotkeyDataFile.GetDefaultHotkeys());
-            //MessageBox.Show((Hotkey)itemsControl.Items[FindHotkeyIndex(OldHotkeys, "CONTROL_CIVILOPEDIA")]);
-
-            // TODO: Change value of hotkey bindings
         }
 
         // Returns index of hotkey in list based on name

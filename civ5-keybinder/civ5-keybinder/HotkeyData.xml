@@ -267,7 +267,7 @@
   <Hotkey>
     <Name>BUILD_CITADEL</Name>
     <ID>430</ID>
-    <File>C</File>
+    <File>1.1</File>
     <DLC>0</DLC>
     <Function>Build Citadel</Function>
     <Key>C</Key>
@@ -682,7 +682,7 @@
   </Hotkey>
   <Hotkey>
     <Name>MISSION_PILLAGE</Name>
-    <ID>860</ID>
+    <ID>862</ID>
     <File>5.1</File>
     <DLC>0</DLC>
     <Function>Pillage</Function>
@@ -816,7 +816,7 @@
   </Hotkey>
   <Hotkey>
     <Name>CONTROL_LASTUNIT</Name>
-    <ID>320</ID>
+    <ID>321</ID>
     <File>8.1</File>
     <DLC>0</DLC>
     <Function>Select Next Unit (different internal hotkey for some reason)</Function>

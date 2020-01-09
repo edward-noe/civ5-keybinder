@@ -41,13 +41,5 @@ namespace civ5_keybinder
             Shift = defShift;
             Alt = defAlt;
         }
-
-        public void DefineBinding(string defKey, bool defCtrl, bool defShift, bool defAlt)
-        {
-            Key = defKey;
-            Ctrl = defCtrl;
-            Shift = defShift;
-            Alt = defAlt;
-        }
     }
 }
