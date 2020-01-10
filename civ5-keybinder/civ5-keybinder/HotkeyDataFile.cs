@@ -46,7 +46,6 @@ namespace civ5_keybinder
         }
 
         // Returns list of each hotkey name
-        // Used in XMLHotkeyFile.cs to limit added hotkeys to those in HotkeyData.xml
         public List<string> GetHotkeyNames()
         {
             List<string> names = new List<string>();
@@ -68,7 +67,7 @@ namespace civ5_keybinder
                 hotkeys.Add(new Hotkey(
                     hotkey.SelectSingleNode("Name").InnerText,
                     int.Parse(hotkey.SelectSingleNode("ID").InnerText),
-                    hotkey.SelectSingleNode("File").InnerText,
+                    //hotkey.SelectSingleNode("File").InnerText,
                     int.Parse(hotkey.SelectSingleNode("DLC").InnerText),
                     hotkey.SelectSingleNode("Function").InnerText,
                     hotkey.SelectSingleNode("Key").InnerText,
@@ -80,16 +79,16 @@ namespace civ5_keybinder
             return hotkeys;
         }
 
-        public Dictionary<int, bool> GetIDDictionary()
-        {
-            Dictionary<int, bool> dictionary = new Dictionary<int, bool>();
+        //public Dictionary<int, bool> GetIDDictionary()
+        //{
+        //    Dictionary<int, bool> dictionary = new Dictionary<int, bool>();
 
-            foreach (XmlNode hotkey in DocumentElement)
-            {
-                dictionary.Add(int.Parse(hotkey.SelectSingleNode("ID").InnerText), false);
-            }
+        //    foreach (XmlNode hotkey in DocumentElement)
+        //    {
+        //        dictionary.Add(int.Parse(hotkey.SelectSingleNode("ID").InnerText), false);
+        //    }
 
-            return dictionary;
-        }
+        //    return dictionary;
+        //}
     }
 }

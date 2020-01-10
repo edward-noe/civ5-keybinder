@@ -11,7 +11,6 @@ namespace civ5_keybinder
     {
         List<XMLHotkeyFile> Files { get; set; } = new List<XMLHotkeyFile>();
 
-        // TODO: Create multiple constructors
         // Creates an XMLHotkeyGroup with files 1, 1-3, or 1-6
         // File 1 (Always): Base file
         // File 2 (Sometimes): Expansion1 base file
@@ -42,29 +41,6 @@ namespace civ5_keybinder
             Files.Add(new XMLHotkeyFile(file6Path));
         }
 
-        public List<Hotkey> GetHotkeys()
-        {
-            List<Hotkey> hotkeys = new List<Hotkey>();
-
-            foreach (XMLHotkeyFile file in Files)
-            {
-                foreach (Hotkey hotkey in file.GetHotkeys())
-                {
-                    // Checks to ensure there is not already a hotkey with the same Name attribute
-                    if (hotkeys.Any(item => item.Name == hotkey.Name) == false)
-                    {
-                        hotkeys.Add(hotkey);
-                    }
-                    // If the Key attribute in the new hotkey does not match that in the hotkeys list, error message is created
-                    else if (hotkey.Key != hotkeys.Single(item => item.Name == hotkey.Name).Key)
-                    {
-                        hotkeys.Single(item => item.Name == hotkey.Name).Key = "ERROR: MULTIPLE KEYS";
-                    }
-                }
-            }
-            return hotkeys;
-        }
-
         public Hotkey GetHotkey(string name)
         {
             if (Files.Count == 1)
@@ -84,15 +60,18 @@ namespace civ5_keybinder
                     }
                 }
 
+                // TODO: Handle case where key or modifier key varies across files
+                // NOTE: The below code is dangerous, it caused most keys to be overwritten across most files
+                // NOTE: You should handle errors differently; don't just overwrite the key
                 // If hotkeys across files differ, changes Key attribute to an error value
-                if (hotkeys.Any(item => !(item.Equals(hotkeys[0]))))
-                {
-                    foreach (Hotkey hotkey in hotkeys)
-                    {
-                        hotkey.Key = "ERROR: MULTIPLE KEYS";
-                    }
-                    return hotkeys[0];
-                }
+                //if (hotkeys.Any(item => !(item.Equals(hotkeys[0]))))
+                //{
+                //    foreach (Hotkey hotkey in hotkeys)
+                //    {
+                //        hotkey.Key = "ERROR: MULTIPLE KEYS";
+                //    }
+                //    return hotkeys[0];
+                //}
                 return hotkeys[0];
             }
         }
