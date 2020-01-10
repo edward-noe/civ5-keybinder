@@ -25,7 +25,6 @@ namespace civ5_keybinder
                 Files.Add(new XMLHotkeyFile(path));
             }
         }
-        //------------------------------------------------------------------------------------------
 
         public Binding GetBinding(string name)
         {
@@ -40,6 +39,7 @@ namespace civ5_keybinder
                 foreach (XMLHotkeyFile file in Files)
                 {
                     Binding binding = file.GetBinding(name);
+                    // TODO: Is the null check still neccesary?
                     if (binding != null)
                     {
                         bindings.Add(binding);
@@ -62,7 +62,6 @@ namespace civ5_keybinder
             }
         }
 
-        //-------------------------------------------------------------------------------------------------------------------
         public void SetBinding(string name, Binding binding)
         {
             foreach (XMLHotkeyFile file in Files)

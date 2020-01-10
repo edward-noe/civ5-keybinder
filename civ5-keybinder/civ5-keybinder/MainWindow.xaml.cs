@@ -254,7 +254,6 @@ namespace civ5_keybinder
             button.Background = (Brush)new BrushConverter().ConvertFrom("#FFBEE6FD");
             button.BorderBrush = (Brush)new BrushConverter().ConvertFrom("#FF3C7FB1");
         }
-
         private void Button_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             Button button = sender as Button;

@@ -73,25 +73,38 @@ namespace civ5_keybinder
             }
         }
 
-        // TODO: Switch to getting mutable attributes instead of the whole thing
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         public Binding GetBinding(string name)
         {
-            foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType)) {
+            foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType))
+            {
                 if (node.SelectSingleNode("Type").InnerText == name)
                 {
-                    // TODO: Actually add Ctrl, Alt, and Shift functionality
-                    return new Binding(
-                        ConvertFileToUserFormat(node.SelectSingleNode("HotKey").InnerText),
-                        hotkeyDataFile.GetBoolAttribute("Ctrl", name),
-                        hotkeyDataFile.GetBoolAttribute("Shift", name),
-                        hotkeyDataFile.GetBoolAttribute("Alt", name));
+                    Binding binding = new Binding(ConvertFileToUserFormat(node.SelectSingleNode("HotKey").InnerText), false, false, false);
+
+                    // Note: This section of code performs poorly in Debug mode, but fine in Release mode
+                    try
+                    {
+                        if (node.SelectSingleNode("CtrlDown").InnerText.Equals("1")) { binding.Ctrl = true; }
+                    }
+                    catch (NullReferenceException) { }
+
+                    try
+                    {
+                        if (node.SelectSingleNode("ShiftDown").InnerText.Equals("1")) { binding.Shift = true; }
+                    }
+                    catch (NullReferenceException) { }
+
+                    try
+                    {
+                        if (node.SelectSingleNode("AltDown").InnerText.Equals("1")) { binding.Alt = true; }
+                    }
+                    catch (NullReferenceException) { }
+
+                    return binding;
                 }
             }
             return null;
         }
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         public void SetBinding(string name, Binding binding)
         {
@@ -100,6 +113,15 @@ namespace civ5_keybinder
                 if (node.SelectSingleNode("Type").InnerText == name)
                 {
                     node.SelectSingleNode("HotKey").InnerText = ConvertUserToFileFormat(binding.Key);
+
+                    //try
+                    //{
+                    //    node.SelectSingleNode("CtrlDown").InnerText = Convert.ToInt32(binding.Ctrl).ToString();
+                    //}
+                    //catch (NullReferenceException)
+                    //{
+                    //    //node.SelectSingleNode("HotKey").InsertAfter(new XmlNode("CtrlDown"), )
+                    //}
                 }
             }
             Save(FilePath);
