@@ -20,6 +20,8 @@ namespace civ5_keybinder
     /// </summary>
     public partial class MainWindow : Window
     {
+        // TODO: Split functions of this class between MainWindow and App
+
         // Main list containing hotkeys
         public List<Hotkey> Hotkeys { get; set; } = new List<Hotkey>();
 
@@ -119,6 +121,7 @@ namespace civ5_keybinder
                     Hotkeys.Add(group.GetHotkey(name));
                 }
             }
+            
             // Changes source of itemsControl to allow for display
             itemsControl.ItemsSource = SortHotkeys(Hotkeys);
         }
@@ -155,9 +158,7 @@ namespace civ5_keybinder
             // TODO: Sort hotkeys by category
 
             // Sorts hotkey list by ID
-            List<Hotkey> sortedHotkeys = hotkeys.OrderBy(hotkey => hotkey.ID).ToList(); 
-
-            return sortedHotkeys;
+            return hotkeys.OrderBy(hotkey => hotkey.ID).ToList(); 
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -169,14 +170,7 @@ namespace civ5_keybinder
                 {
                     if (output)
                     {
-                        // Converts file string to char and then int
-                        char groupChar = hotkeyDataFile.GetStringAttribute("File", hotkey.Name)[0];
-                        int group = int.Parse(groupChar.ToString());
-
-                        Groups[group].SetHotkey(hotkey);
-
-                        // Moved to UpdateHotkeys to be safe
-                        //ModifiedHotkeys[hotkey.Name] = false;
+                        SetHotkey(hotkey);
                     }
                 }
             }
@@ -184,14 +178,28 @@ namespace civ5_keybinder
             UpdateHotkeys();
         }
 
+        private void SetHotkey(Hotkey hotkey)
+        {
+            Groups[hotkeyDataFile.GetGroupNumber(hotkey.Name)].SetHotkey(hotkey);
+        }
+
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            //HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
+            //TODO: Give user a chance to change their mind and warn that this cannot be undone
+            //TODO: Add a progress bar? 
+            foreach (Hotkey hotkey in Hotkeys.ToList())
+            {
+                Tuple<string, bool, bool, bool> bindings = hotkeyDataFile.GetDefaultHotkeyBinding(hotkey.Name);
 
-            itemsControl.ItemsSource = SortHotkeys(hotkeyDataFile.GetDefaultHotkeys());
-            //MessageBox.Show((Hotkey)itemsControl.Items[FindHotkeyIndex(OldHotkeys, "CONTROL_CIVILOPEDIA")]);
+                hotkey.Key = bindings.Item1;
+                hotkey.Ctrl = bindings.Item2;
+                hotkey.Shift = bindings.Item3;
+                hotkey.Alt = bindings.Item4;
 
-            // TODO: Change value of hotkey bindings
+                SetHotkey(hotkey);
+            }
+
+            itemsControl.ItemsSource = SortHotkeys(Hotkeys);
         }
 
         private void Button_PreviewKeyDown(object sender, KeyEventArgs e)

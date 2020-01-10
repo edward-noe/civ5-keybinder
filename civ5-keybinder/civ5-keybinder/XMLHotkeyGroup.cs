@@ -18,27 +18,12 @@ namespace civ5_keybinder
         // File 4 (Sometimes) (only used by Builds): Expansion1 file inhereted from base
         // File 5 (Sometimes) (only used by Builds): Expansion2 file inhereted from base
         // File 6 (Sometimes) (only used by Builds): Expansion2 file inhereted from Expansion1
-        public XMLHotkeyGroup(string file1Path)
+        public XMLHotkeyGroup(params string[] paths)
         {
-            Files.Add(new XMLHotkeyFile(file1Path));
-        }
-
-        public XMLHotkeyGroup(string file1Path, string file2Path, string file3Path)
-        {
-            // TODO: Make this a for loop or something
-            Files.Add(new XMLHotkeyFile(file1Path));
-            Files.Add(new XMLHotkeyFile(file2Path));
-            Files.Add(new XMLHotkeyFile(file3Path));
-        }
-
-        public XMLHotkeyGroup(string file1Path, string file2Path, string file3Path, string file4Path, string file5Path, string file6Path)
-        {
-            Files.Add(new XMLHotkeyFile(file1Path));
-            Files.Add(new XMLHotkeyFile(file2Path));
-            Files.Add(new XMLHotkeyFile(file3Path));
-            Files.Add(new XMLHotkeyFile(file4Path));
-            Files.Add(new XMLHotkeyFile(file5Path));
-            Files.Add(new XMLHotkeyFile(file6Path));
+            foreach (string path in paths)
+            {
+                Files.Add(new XMLHotkeyFile(path));
+            }
         }
 
         public Hotkey GetHotkey(string name)

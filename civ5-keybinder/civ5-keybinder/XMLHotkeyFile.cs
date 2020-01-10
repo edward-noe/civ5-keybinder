@@ -73,6 +73,8 @@ namespace civ5_keybinder
             }
         }
 
+        // TODO: Switch to getting mutable attributes instead of the whole thing
+
         public Hotkey GetHotkey(string name)
         {
             foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType)) {
@@ -81,12 +83,9 @@ namespace civ5_keybinder
                     // TODO: Actually add Ctrl, Alt, and Shift functionality
                     return new Hotkey(
                         node.SelectSingleNode("Type").InnerText,
-                        // Consults HotkeyData.xml to determine ID and other attributes
                         hotkeyDataFile.GetIntAttribute("ID", name),
-                        //hotkeyDataFile.GetStringAttribute("File", name),
                         hotkeyDataFile.GetIntAttribute("DLC", name),
                         hotkeyDataFile.GetStringAttribute("Function", name),
-                        // Converts from KB_A format to A format
                         ConvertFileToUserFormat(node.SelectSingleNode("HotKey").InnerText),
                         hotkeyDataFile.GetBoolAttribute("Ctrl", name),
                         hotkeyDataFile.GetBoolAttribute("Shift", name),

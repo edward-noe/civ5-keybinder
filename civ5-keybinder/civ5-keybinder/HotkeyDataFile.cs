@@ -58,37 +58,28 @@ namespace civ5_keybinder
             return names;
         }
 
-        public List<Hotkey> GetDefaultHotkeys()
+        public Tuple<string, bool, bool, bool> GetDefaultHotkeyBinding(string name)
         {
-            List<Hotkey> hotkeys = new List<Hotkey>();
-
             foreach (XmlNode hotkey in DocumentElement)
             {
-                hotkeys.Add(new Hotkey(
-                    hotkey.SelectSingleNode("Name").InnerText,
-                    int.Parse(hotkey.SelectSingleNode("ID").InnerText),
-                    //hotkey.SelectSingleNode("File").InnerText,
-                    int.Parse(hotkey.SelectSingleNode("DLC").InnerText),
-                    hotkey.SelectSingleNode("Function").InnerText,
-                    hotkey.SelectSingleNode("Key").InnerText,
-                    Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Ctrl").InnerText)),
-                    Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Shift").InnerText)),
-                    Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Alt").InnerText))));
+                if (hotkey.SelectSingleNode("Name").InnerText == name)
+                {
+                    return new Tuple<string, bool, bool, bool>(
+                        hotkey.SelectSingleNode("Key").InnerText,
+                        Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Ctrl").InnerText)),
+                        Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Shift").InnerText)),
+                        Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Alt").InnerText)));
+                }
             }
-
-            return hotkeys;
+            // TODO: Better error handling
+            return null;
         }
 
-        //public Dictionary<int, bool> GetIDDictionary()
-        //{
-        //    Dictionary<int, bool> dictionary = new Dictionary<int, bool>();
-
-        //    foreach (XmlNode hotkey in DocumentElement)
-        //    {
-        //        dictionary.Add(int.Parse(hotkey.SelectSingleNode("ID").InnerText), false);
-        //    }
-
-        //    return dictionary;
-        //}
+        // Gets group number from file attribute
+        public int GetGroupNumber(string name)
+        {
+            char groupChar = GetStringAttribute("File", name)[0];
+            return int.Parse(groupChar.ToString());
+        }
     }
 }

@@ -39,5 +39,7 @@ namespace civ5_keybinder
             Shift = defShift;
             Alt = defAlt;
         }
+
+        // TODO: Move GetGroupNumber method to this class? Maybe other methods?
     }
 }
