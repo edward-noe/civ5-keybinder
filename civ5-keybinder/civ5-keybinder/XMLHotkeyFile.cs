@@ -74,18 +74,15 @@ namespace civ5_keybinder
         }
 
         // TODO: Switch to getting mutable attributes instead of the whole thing
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public Hotkey GetHotkey(string name)
+        public Binding GetBinding(string name)
         {
             foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType)) {
                 if (node.SelectSingleNode("Type").InnerText == name)
                 {
                     // TODO: Actually add Ctrl, Alt, and Shift functionality
-                    return new Hotkey(
-                        node.SelectSingleNode("Type").InnerText,
-                        hotkeyDataFile.GetIntAttribute("ID", name),
-                        hotkeyDataFile.GetIntAttribute("DLC", name),
-                        hotkeyDataFile.GetStringAttribute("Function", name),
+                    return new Binding(
                         ConvertFileToUserFormat(node.SelectSingleNode("HotKey").InnerText),
                         hotkeyDataFile.GetBoolAttribute("Ctrl", name),
                         hotkeyDataFile.GetBoolAttribute("Shift", name),
@@ -94,14 +91,15 @@ namespace civ5_keybinder
             }
             return null;
         }
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public void SetHotkey(Hotkey hotkey)
+        public void SetBinding(string name, Binding binding)
         {
             foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType))
             {
-                if (node.SelectSingleNode("Type").InnerText == hotkey.Name)
+                if (node.SelectSingleNode("Type").InnerText == name)
                 {
-                    node.SelectSingleNode("HotKey").InnerText = ConvertUserToFileFormat(hotkey.Key);
+                    node.SelectSingleNode("HotKey").InnerText = ConvertUserToFileFormat(binding.Key);
                 }
             }
             Save(FilePath);

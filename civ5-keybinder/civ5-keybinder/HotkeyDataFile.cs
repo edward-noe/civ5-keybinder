@@ -58,13 +58,13 @@ namespace civ5_keybinder
             return names;
         }
 
-        public Tuple<string, bool, bool, bool> GetDefaultHotkeyBinding(string name)
+        public Binding GetDefaultHotkeyBinding(string name)
         {
             foreach (XmlNode hotkey in DocumentElement)
             {
                 if (hotkey.SelectSingleNode("Name").InnerText == name)
                 {
-                    return new Tuple<string, bool, bool, bool>(
+                    return new Binding(
                         hotkey.SelectSingleNode("Key").InnerText,
                         Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Ctrl").InnerText)),
                         Convert.ToBoolean(int.Parse(hotkey.SelectSingleNode("Shift").InnerText)),

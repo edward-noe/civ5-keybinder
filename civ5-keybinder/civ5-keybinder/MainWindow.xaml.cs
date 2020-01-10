@@ -21,6 +21,7 @@ namespace civ5_keybinder
     public partial class MainWindow : Window
     {
         // TODO: Split functions of this class between MainWindow and App
+        // TODO: Fix bug where it takes two clicks to modify button text if a key is modified, applied, and the same is selected
 
         // Main list containing hotkeys
         public List<Hotkey> Hotkeys { get; set; } = new List<Hotkey>();
@@ -29,7 +30,7 @@ namespace civ5_keybinder
         public Dictionary<string, bool> ModifiedHotkeys { get; set; }
 
         // List containing HotkeyGroups
-        Dictionary<int, XMLHotkeyGroup> Groups = new Dictionary<int, XMLHotkeyGroup>();
+        public static Dictionary<int, XMLHotkeyGroup> Groups = new Dictionary<int, XMLHotkeyGroup>();
         
         public static readonly HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
 
@@ -66,7 +67,7 @@ namespace civ5_keybinder
 
             InitializeDictionary();
 
-            GetHotkeys();
+            InitializeHotkeys();
         }
         public void InitializeDocuments()
         {
@@ -108,17 +109,23 @@ namespace civ5_keybinder
         }
 
         // Fills in Hotkeys list when application is started
-        public void GetHotkeys()
+        public void InitializeHotkeys()
         {
             List<string> hotkeyNames = hotkeyDataFile.GetHotkeyNames();
 
             foreach (string name in hotkeyNames)
             {
-                int groupNumber = int.Parse(hotkeyDataFile.GetStringAttribute("File", name).ToCharArray()[0].ToString());
-
+                int groupNumber = int.Parse(hotkeyDataFile.GetStringAttribute("File", name)[0].ToString());
                 if (Groups.TryGetValue(groupNumber, out XMLHotkeyGroup group))
                 {
-                    Hotkeys.Add(group.GetHotkey(name));
+                    Hotkeys.Add(new Hotkey(
+                    name,
+                    hotkeyDataFile.GetIntAttribute("ID", name),
+                    groupNumber,
+                    hotkeyDataFile.GetIntAttribute("DLC", name),
+                    hotkeyDataFile.GetStringAttribute("Function", name),
+                    group.GetBinding(name)
+                    ));
                 }
             }
             
@@ -129,26 +136,24 @@ namespace civ5_keybinder
         // Updates hotkeys as they have been modified
         public void UpdateHotkeys()
         {
-            List<string> hotkeyNames = new List<string>();
+            List<string> hotkeysToUpdate = new List<string>();
 
             foreach (KeyValuePair<string, bool> pair in ModifiedHotkeys.ToList())
             {
                 if (pair.Value == true)
                 {
-                    hotkeyNames.Add(pair.Key);
+                    hotkeysToUpdate.Add(pair.Key);
                     ModifiedHotkeys[pair.Key] = false;
                 }
             }
 
-            foreach (string name in hotkeyNames)
+            foreach (string name in hotkeysToUpdate)
             {
-                int groupNumber = int.Parse(hotkeyDataFile.GetStringAttribute("File", name).ToCharArray()[0].ToString());
-
                 Hotkey hotkey = Hotkeys.Find(item => item.Name == name);
 
-                if (Groups.TryGetValue(groupNumber, out XMLHotkeyGroup group))
+                if (Groups.TryGetValue(hotkey.Group, out XMLHotkeyGroup group))
                 {
-                    hotkey = group.GetHotkey(name);
+                    hotkey.UpdateBinding(group.GetBinding(name));
                 }
             }
         }
@@ -170,7 +175,7 @@ namespace civ5_keybinder
                 {
                     if (output)
                     {
-                        SetHotkey(hotkey);
+                        SetBinding(hotkey);
                     }
                 }
             }
@@ -178,25 +183,23 @@ namespace civ5_keybinder
             UpdateHotkeys();
         }
 
-        private void SetHotkey(Hotkey hotkey)
+        // TODO: Maybe this function is not neccesary; it's quite small
+        private void SetBinding(Hotkey hotkey)
         {
-            Groups[hotkeyDataFile.GetGroupNumber(hotkey.Name)].SetHotkey(hotkey);
+            Groups[hotkey.Group].SetBinding(hotkey.Name, hotkey.Binding);
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: Give user a chance to change their mind and warn that this cannot be undone
             //TODO: Add a progress bar? 
-            foreach (Hotkey hotkey in Hotkeys.ToList())
+            foreach (Hotkey hotkey in Hotkeys)
             {
-                Tuple<string, bool, bool, bool> bindings = hotkeyDataFile.GetDefaultHotkeyBinding(hotkey.Name);
+                Binding binding = hotkeyDataFile.GetDefaultHotkeyBinding(hotkey.Name);
 
-                hotkey.Key = bindings.Item1;
-                hotkey.Ctrl = bindings.Item2;
-                hotkey.Shift = bindings.Item3;
-                hotkey.Alt = bindings.Item4;
+                hotkey.UpdateBinding(binding);
 
-                SetHotkey(hotkey);
+                SetBinding(hotkey);
             }
 
             itemsControl.ItemsSource = SortHotkeys(Hotkeys);
@@ -213,37 +216,32 @@ namespace civ5_keybinder
             else if (e.Key == Key.Return)
             {
                 button.Content = "Enter";
-                e.Handled = true;
             }
             else if (e.Key == Key.System)
             {
                 button.Content = "F10";
-                e.Handled = true;
             }
             else if (e.Key == Key.Next)
             {
                 button.Content = "PageDown";
-                // Prevents page from scrolling when pressed
-                e.Handled = true;
             }
             else if (e.Key == Key.PageDown)
             {
                 button.Content = "PageUp";
-                e.Handled = true;
             }
             else
             {
                 if (e.Key.ToString().Length > 1)
                 {
                     button.Content = e.Key.ToString();
-                    e.Handled = true;
                 }
                 else
                 {
                     button.Content = e.Key.ToString().ToUpper();
-                    e.Handled = true;
                 }
             }
+            // Prevents actual function of pressed key from occuring
+            e.Handled = true;
 
             // Updates ModifiedHotkeys dictionary using DataContext
             ModifiedHotkeys[((Hotkey)button.DataContext).Name] = true;

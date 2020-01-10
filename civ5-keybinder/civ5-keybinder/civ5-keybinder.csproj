@@ -54,6 +54,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Binding.cs" />
     <Compile Include="HotkeyDataFile.cs" />
     <Compile Include="XMLHotkeyFile.cs" />
     <Compile Include="XMLHotkeyGroup.cs" />

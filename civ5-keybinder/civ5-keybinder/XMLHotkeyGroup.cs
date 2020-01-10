@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace civ5_keybinder
 {
     // Manages a group of XMLHotkeyFiles
-    class XMLHotkeyGroup
+    public class XMLHotkeyGroup
     {
         List<XMLHotkeyFile> Files { get; set; } = new List<XMLHotkeyFile>();
 
@@ -25,23 +25,24 @@ namespace civ5_keybinder
                 Files.Add(new XMLHotkeyFile(path));
             }
         }
+        //------------------------------------------------------------------------------------------
 
-        public Hotkey GetHotkey(string name)
+        public Binding GetBinding(string name)
         {
             if (Files.Count == 1)
             {
-                return Files[0].GetHotkey(name);
+                return Files[0].GetBinding(name);
             }
             else
             {
-                List<Hotkey> hotkeys = new List<Hotkey>();
+                List<Binding> bindings = new List<Binding>();
 
                 foreach (XMLHotkeyFile file in Files)
                 {
-                    Hotkey hotkey = file.GetHotkey(name);
-                    if (hotkey != null)
+                    Binding binding = file.GetBinding(name);
+                    if (binding != null)
                     {
-                        hotkeys.Add(hotkey);
+                        bindings.Add(binding);
                     }
                 }
 
@@ -57,15 +58,16 @@ namespace civ5_keybinder
                 //    }
                 //    return hotkeys[0];
                 //}
-                return hotkeys[0];
+                return bindings[0];
             }
         }
 
-        public void SetHotkey(Hotkey hotkey)
+        //-------------------------------------------------------------------------------------------------------------------
+        public void SetBinding(string name, Binding binding)
         {
             foreach (XMLHotkeyFile file in Files)
             {
-                file.SetHotkey(hotkey);
+                file.SetBinding(name, binding);
             }
         }
     }

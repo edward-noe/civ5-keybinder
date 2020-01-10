@@ -10,17 +10,16 @@ namespace civ5_keybinder
     {
         public string Name { get; }
         public int ID { get; } // Used to order hotkeys in MainWindow
+        public int Group { get; }
         public string DLC { get; }
         public string Function { get; }
-        public string Key { get; set; }
-        public bool Ctrl { get; set; }
-        public bool Shift { get; set; }
-        public bool Alt { get; set; }
+        public Binding Binding { get; set; }
 
-        public Hotkey(string defName, int defID, int defDLC, string defFunction, string defKey, bool defCtrl, bool defShift, bool defAlt)
+        public Hotkey(string defName, int defID, int defGroup, int defDLC, string defFunction, Binding defBinding)
         {
             Name = defName;
             ID = defID;
+            Group = defGroup;
             switch (defDLC)
             {
                 case 0:
@@ -34,12 +33,15 @@ namespace civ5_keybinder
                     break;
             }
             Function = defFunction;
-            Key = defKey;
-            Ctrl = defCtrl;
-            Shift = defShift;
-            Alt = defAlt;
+            Binding = defBinding;
         }
 
-        // TODO: Move GetGroupNumber method to this class? Maybe other methods?
+        // TODO: It really shouldn't be possible to change the attributes of a Hotkey without also changing the XML
+        public void UpdateBinding(Binding defBinding)
+        {
+            Binding = defBinding;
+        }
+
+        // TODO: Move other methods to this class
     }
 }
