@@ -13,8 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using System.Xml;
-
 namespace civ5_keybinder
 {
     /// <summary>
@@ -22,197 +20,254 @@ namespace civ5_keybinder
     /// </summary>
     public partial class MainWindow : Window
     {
+        // TODO: Split functions of this class between MainWindow and App
+        // TODO: Fix bug where it takes two clicks to modify button text if a key is modified, applied, and the same is selected
+
+        // Main list containing hotkeys
+        public List<Hotkey> Hotkeys { get; set; } = new List<Hotkey>();
+
+        // List of modified hotkeys
+        public Dictionary<string, bool> ModifiedHotkeys { get; set; }
+
+        // List containing HotkeyGroups
+        public static Dictionary<int, XMLHotkeyGroup> Groups = new Dictionary<int, XMLHotkeyGroup>();
+        
+        public static readonly HotkeyDataFile hotkeyDataFile = new HotkeyDataFile("Resources\\HotkeyData.xml");
+
+        public static Dictionary<string, string> KeyDict { get; } = new Dictionary<string, string>
+        {
+            {"Oem1", ";"},
+            {"Oem3", "`"},
+            {"Oem5", "\\"},
+            {"OemMinus", "-"},
+            {"OemPlus", "="},
+            {"OemOpenBrackets", "["},
+            {"Oem6", "]"},
+            {"OemQuotes", "'"},
+            {"OemComma", ","},
+            {"OemPeriod", "."},
+            {"OemQuestion", "/"},
+            {"D1", "1"},
+            {"D2", "2"},
+            {"D3", "3"},
+            {"D4", "4"},
+            {"D5", "5"},
+            {"D6", "6"},
+            {"D7", "7"},
+            {"D8", "8"},
+            {"D9", "9"},
+            {"D0", "0"},
+        };
+
         public MainWindow()
         {
             InitializeComponent();
 
-            List<Hotkey> hotkeys = new List<Hotkey>();
-            hotkeys.Add(new Hotkey(1, 0, "Civilopedia", "F1", false, false, false));
-            hotkeys.Add(new Hotkey(1, 0, "Economic", "F2", false, false, false));
+            InitializeDocuments();
 
-            // Sets the source of data for ItemControl element to hotkeys list
-            itemsControl.ItemsSource = hotkeys;
+            InitializeDictionary();
 
-            //XMLHotkeyFile doc = new XMLHotkeyFile("C:\\Users\\edwar\\Documents\\Programming\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml");
+            InitializeHotkeys();
+        }
+        public void InitializeDocuments()
+        {
+            // Imports documents as XMLHotkeyGroups
+            Groups.Add(1, new XMLHotkeyGroup(
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\1-Builds--\\Base\\CIV5Builds.xml",
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\1-Builds--\\Expansion\\CIV5Builds_Expansion.xml",
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds_Expansion2.xml",
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\1-Builds--\\Expansion\\CIV5Builds.xml",
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds.xml",
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\1-Builds--\\Expansion2\\CIV5Builds_Inherited_Expansion2.xml"));
+            Groups.Add(2, new XMLHotkeyGroup(
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\2-InterfaceModes\\Base\\CIV5InterfaceModes.xml"));
+            Groups.Add(3, new XMLHotkeyGroup(
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\3-Automates\\CIV5Automates.xml"));
+            Groups.Add(4, new XMLHotkeyGroup(
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\4-Commands\\CIV5Commands.xml"));
+            Groups.Add(5, new XMLHotkeyGroup(
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\5-Missions-\\Base\\CIV5Missions.xml",
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\5-Missions-\\Expansion\\CIV5Missions.xml",
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\5-Missions-\\Expansion2\\CIV5Missions.xml"));
+            Groups.Add(8, new XMLHotkeyGroup(
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\8-Controls-\\Base\\CIV5Controls.xml",
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\8-Controls-\\Expansion\\CIV5Controls.xml",
+                "C:\\Users\\Edward Noe\\Documents\\Computing\\civ5-keybinder\\test-files\\8-Controls-\\Expansion2\\CIV5Controls.xml"));
 
-            //Display the document element.
-            //doc.ShowFile();
+            // TODO: Add support for LUA hotkeys (Groups 6 and 7) 
         }
 
-        private void button_PreviewKeyDown(object sender, KeyEventArgs e)
+        public void InitializeDictionary()
+        {
+            ModifiedHotkeys = new Dictionary<string, bool>();
+
+            List<string> list = hotkeyDataFile.GetHotkeyNames();
+            foreach (string name in list)
+            {
+                ModifiedHotkeys.Add(name, false);
+            }
+        }
+
+        // Fills in Hotkeys list when application is started
+        public void InitializeHotkeys()
+        {
+            List<string> hotkeyNames = hotkeyDataFile.GetHotkeyNames();
+
+            foreach (string name in hotkeyNames)
+            {
+                int groupNumber = int.Parse(hotkeyDataFile.GetStringAttribute("File", name)[0].ToString());
+                if (Groups.TryGetValue(groupNumber, out XMLHotkeyGroup group))
+                {
+                    Hotkeys.Add(new Hotkey(
+                    name,
+                    hotkeyDataFile.GetIntAttribute("ID", name),
+                    groupNumber,
+                    hotkeyDataFile.GetIntAttribute("DLC", name),
+                    hotkeyDataFile.GetStringAttribute("Function", name),
+                    group.GetBinding(name)));
+                }
+            }
+            
+            // Changes source of itemsControl to allow for display
+            itemsControl.ItemsSource = SortHotkeys(Hotkeys);
+        }
+
+        // Updates hotkeys as they have been modified
+        public void UpdateHotkeys()
+        {
+            List<string> hotkeysToUpdate = new List<string>();
+
+            foreach (KeyValuePair<string, bool> pair in ModifiedHotkeys.ToList())
+            {
+                if (pair.Value == true)
+                {
+                    hotkeysToUpdate.Add(pair.Key);
+                    ModifiedHotkeys[pair.Key] = false;
+                }
+            }
+
+            foreach (string name in hotkeysToUpdate)
+            {
+                Hotkey hotkey = Hotkeys.Find(item => item.Name == name);
+
+                if (Groups.TryGetValue(hotkey.Group, out XMLHotkeyGroup group))
+                {
+                    hotkey.Binding = group.GetBinding(name);
+                }
+            }
+        }
+
+        public List<Hotkey> SortHotkeys(List<Hotkey> hotkeys)
+        {
+            // TODO: Sort hotkeys by category
+
+            // Sorts hotkey list by ID
+            return hotkeys.OrderBy(hotkey => hotkey.ID).ToList(); 
+        }
+
+        private void ApplyButton_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < itemsControl.Items.Count; i++)
+            {
+                Hotkey hotkey = (Hotkey)itemsControl.Items[i];
+                if (ModifiedHotkeys.TryGetValue(hotkey.Name, out bool output))
+                {
+                    if (output)
+                    {
+                        SetBinding(hotkey);
+                    }
+                }
+            }
+            //Refreshes list of hotkeys
+            UpdateHotkeys();
+        }
+
+        private void SetBinding(Hotkey hotkey)
+        {
+            Groups[hotkey.Group].SetBinding(hotkey.Name, hotkey.Binding);
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Add a progress bar
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure? This cannot be undone.", "Reset to Defaults", MessageBoxButton.YesNo);
+            
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                foreach (Hotkey hotkey in Hotkeys)
+                {
+                    Binding binding = hotkeyDataFile.GetDefaultHotkeyBinding(hotkey.Name);
+
+                    hotkey.Binding = binding;
+
+                    SetBinding(hotkey);
+                }
+
+                itemsControl.ItemsSource = SortHotkeys(Hotkeys);
+            }
+        }
+
+        private void Button_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             Button button = sender as Button;
 
-            if (e.Key == Key.Return)
+            if (KeyDict.ContainsKey(e.Key.ToString()))
+            {
+                button.Content = KeyDict[e.Key.ToString()];
+            }
+            else if (e.Key == Key.Return)
             {
                 button.Content = "Enter";
-                e.Handled = true;
             }
             else if (e.Key == Key.System)
             {
                 button.Content = "F10";
-                e.Handled = true;
             }
             else if (e.Key == Key.Next)
             {
                 button.Content = "PageDown";
-                // Prevents page from scrolling when pressed
-                e.Handled = true;
             }
             else if (e.Key == Key.PageDown)
             {
                 button.Content = "PageUp";
-                e.Handled = true;
             }
             else
             {
                 if (e.Key.ToString().Length > 1)
                 {
                     button.Content = e.Key.ToString();
-                    e.Handled = true;
                 }
                 else
                 {
                     button.Content = e.Key.ToString().ToUpper();
-                    e.Handled = true;
                 }
             }
+            // Prevents actual function of pressed key from occuring
+            e.Handled = true;
+
+            // Updates ModifiedHotkeys dictionary using DataContext
+            ModifiedHotkeys[((Hotkey)button.DataContext).Name] = true;
         }
 
-        private void button_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkBox = sender as CheckBox;
+
+            ModifiedHotkeys[((Hotkey)checkBox.DataContext).Name] = true;
+        }
+
+        // Changes appearance of button
+        private void Button_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             Button button = sender as Button;
             button.Background = (Brush)new BrushConverter().ConvertFrom("#FFBEE6FD");
             button.BorderBrush = (Brush)new BrushConverter().ConvertFrom("#FF3C7FB1");
         }
-
-        private void button_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        private void Button_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             Button button = sender as Button;
             button.Background = (Brush)new BrushConverter().ConvertFrom("#FFDDDDDD");
             button.BorderBrush = (Brush)new BrushConverter().ConvertFrom("#FF707070");
-        }
-
-        public List<Hotkey> DefaultHotkeys()
-        {
-            List<Hotkey> hotkeys = new List<Hotkey>
-            {
-                // Menus
-                new Hotkey(8, 0, "Civilopedia", "F1", false, false, false),
-                new Hotkey(8, 0, "Economic", "F2", false, false, false),
-                new Hotkey(8, 0, "Military", "F3", false, false, false),
-                new Hotkey(8, 0, "Diplomacy", "F4", false, false, false),
-                new Hotkey(8, 0, "Social Policies", "F5", false, false, false),
-                new Hotkey(8, 0, "Research", "F6", false, false, false),
-                new Hotkey(8, 0, "Notifications", "F7", false, false, false),
-                new Hotkey(8, 0, "Victory Progress", "F8", false, false, false),
-                new Hotkey(8, 0, "Demographics", "F9", false, false, false),
-                new Hotkey(8, 0, "Strategic View", "F10", false, false, false),
-                new Hotkey(8, 0, "Advisor Counsel", "V", false, false, false),
-                new Hotkey(8, 0, "Espionage", "E", true, false, false),
-                new Hotkey(8, 0, "Religion", "P", true, false, false),
-
-                // Turn Management
-                new Hotkey(8, 0, "Next Turn", "Enter", false, false, false), // Alternate kotkey: Ctrl + Space
-                new Hotkey(8, 0, "Force Next Turn", "Enter", false, true, false),
-
-                // World View
-                new Hotkey(6, 0, "Show Hex Grid", "G", false, false, false),
-                new Hotkey(8, 0, "Show Resources Icons", "R", true, false, false),
-                new Hotkey(8, 0, "Show Yields", "Y", false, false, false),
-
-                // Zoom
-                new Hotkey(7, 0, "Zoom In", "=", false, false, false), // Alternate kotkey: PageUp
-                new Hotkey(7, 0, "Zoom Out", "-", false, false, false), // Alternate kotkey: PageDown
-
-                // Cities
-                new Hotkey(8, 0, "Capital", "Home", false, false, false),
-                new Hotkey(8, 0, "Next", "End", false, false, false), // Possibly flipped with previous
-                new Hotkey(8, 0, "Previous", "Insert", false, false, false),
-
-                // Saves
-                new Hotkey(8, 0, "Quick Save", "F11", false, false, false),
-                new Hotkey(8, 0, "Quick Load", "F11", true, false, false), // Ctrl or shift?
-                new Hotkey(8, 0, "Save", "S", true, false, false),
-                new Hotkey(8, 0, "Load", "L", true, false, false),
-
-                // Other Menus
-                new Hotkey(6, 0, "Menu", "Escape", false, false, false),
-                new Hotkey(8, 0, "Options", "O", true, false, false),
-
-                // General
-                new Hotkey(5, 0, "Do Nothing", "Space", false, false, false),
-                new Hotkey(5, 0, "Sleep/Fortify/Wake", "F", false, false, false),
-                new Hotkey(4, 0, "Cancel Last Order", "Backspace", false, false, false),
-                new Hotkey(8, 0, "Next Unit", "W", false, false, false), // Alternate hotkey: .
-                new Hotkey(8, 0, "Previous Unit", "Comma", false, false, false),
-                new Hotkey(2, 0, "Move", "M", false, false, false),
-                new Hotkey(5, 0, "Fortify Until Healed", "H", false, false, false),
-                new Hotkey(2, 0, "Airlift", "A", false, true, false),
-                new Hotkey(2, 0, "Embark", "K", false, false, false), // Embark and disembark are two seperate hotkeys
-                new Hotkey(4, 0, "Upgrade Unit", "U", false, false, false),
-                new Hotkey(3, 0, "Explore", "E", false, false, false),
-                new Hotkey(4, 0, "Disband", "Delete", false, false, false),
-
-                // Great Person
-                new Hotkey(1, 0, "Customs House", "H", false, false, false),
-                new Hotkey(1, 0, "Citadel", "C", false, false, false),
-                new Hotkey(1, 0, "Academy", "A", false, false, false),
-                new Hotkey(1, 0, "Holy Site", "L", false, false, false),
-                new Hotkey(1, 0, "Maunfactory", "M", false, false, false),
-                //Landmark (1, "L")
-
-                // Civilian
-                new Hotkey(5, 0, "Found City", "B", false, false, false),
-                new Hotkey(1, 0, "Chop Forest", "C", false, false, true), // Also jungle
-                new Hotkey(2, 0, "Route to", "R", true, true, false),
-                new Hotkey(1, 0, "Construct Road", "R", false, false, false),
-                new Hotkey(1, 0, "Construct Railroad", "R", false, false, true),
-                new Hotkey(1, 0, "Remove Road", "R", true, false, true),
-                new Hotkey(1, 0, "Trading Post", "T", false, false, false),
-                new Hotkey(1, 0, "Camp", "H", false, false, false),
-                new Hotkey(1, 0, "Farm", "I", false, false, false),
-                new Hotkey(1, 0, "Mine", "N", false, false, false),
-                new Hotkey(1, 0, "Plantation", "P", false, false, false),
-                new Hotkey(1, 0, "Quarry", "Q", false, false, false),
-                new Hotkey(1, 0, "Pasture", "P", false, false, false),
-                new Hotkey(1, 0, "Fort", "F", true, false, false),
-                new Hotkey(1, 0, "Oil Well", "O", false, false, false),
-                new Hotkey(1, 0, "Fishing Boats", "F", false, false, false),
-                new Hotkey(1, 0, "Lumber Mill", "L", false, false, false),
-                new Hotkey(1, 0, "Archaeological Dig", "A", true, false, false),
-                new Hotkey(8, 0, "Next Unassigned Worker", "/", false, false, false),
-                new Hotkey(1, 0, "Repair Improvement", "P", true, false, false),
-                new Hotkey(1, 0, "Scrub Fallout", "S", false, false, false),
-                new Hotkey(3, 0, "Automated Build", "A", false, false, false),
-
-                // Aircraft
-                new Hotkey(5, 0, "Rebase", "R", false, false, true), // Ctrl?
-                new Hotkey(2, 0, "Air Strike", "S", false, false, false),
-                new Hotkey(5, 0, "Air Sweep", "S", false, false, true),
-                new Hotkey(5, 0, "Intercept", "I", false, false, false),
-                new Hotkey(2, 0, "Nuke Mode", "N", false, false, false),
-
-                // Military
-                new Hotkey(2, 0, "Attack", "A", true, false, false),
-                new Hotkey(5, 0, "Alert", "A", false, false, false),
-                new Hotkey(5, 0, "Set Up Ranged", "S", false, false, false),
-                new Hotkey(5, 0, "Ranged Attack", "B", false, false, false),
-                new Hotkey(5, 0, "Pillage", "P", false, true, false),
-                new Hotkey(2, 0, "Paradrop", "P", false, false, false),
-            };
-
-            return hotkeys;
-        }
-
-        private void ApplyButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("apply button clicked");
-        }
-
-        private void ResetButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("reset button clicked");
         }
     }
 }

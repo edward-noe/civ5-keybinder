@@ -8,17 +8,18 @@ namespace civ5_keybinder
 {
     public class Hotkey
     {
-        public int File { get; }
+        public string Name { get; }
+        public int ID { get; } // Used to order hotkeys in MainWindow
+        public int Group { get; }
         public string DLC { get; }
         public string Function { get; }
-        public string Key { get; set; }
-        public bool Ctrl { get; set; }
-        public bool Shift { get; set; }
-        public bool Alt { get; set; }
+        public Binding Binding { get; set; }
 
-        public Hotkey(int defFile, int defDLC, string defFunction, string defKey, bool defCtrl, bool defShift, bool defAlt)
+        public Hotkey(string defName, int defID, int defGroup, int defDLC, string defFunction, Binding defBinding)
         {
-            File = defFile;
+            Name = defName;
+            ID = defID;
+            Group = defGroup;
             switch (defDLC)
             {
                 case 0:
@@ -32,18 +33,7 @@ namespace civ5_keybinder
                     break;
             }
             Function = defFunction;
-            Key = defKey;
-            Ctrl = defCtrl;
-            Shift = defShift;
-            Alt = defAlt;
-        }
-
-        public void DefineBinding(string defKey, bool defCtrl, bool defShift, bool defAlt)
-        {
-            Key = defKey;
-            Ctrl = defCtrl;
-            Shift = defShift;
-            Alt = defAlt;
+            Binding = defBinding;
         }
     }
 }
