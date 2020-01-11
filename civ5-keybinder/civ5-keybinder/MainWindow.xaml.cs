@@ -124,8 +124,7 @@ namespace civ5_keybinder
                     groupNumber,
                     hotkeyDataFile.GetIntAttribute("DLC", name),
                     hotkeyDataFile.GetStringAttribute("Function", name),
-                    group.GetBinding(name)
-                    ));
+                    group.GetBinding(name)));
                 }
             }
             
@@ -245,6 +244,13 @@ namespace civ5_keybinder
 
             // Updates ModifiedHotkeys dictionary using DataContext
             ModifiedHotkeys[((Hotkey)button.DataContext).Name] = true;
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkBox = sender as CheckBox;
+
+            ModifiedHotkeys[((Hotkey)checkBox.DataContext).Name] = true;
         }
 
         // Changes appearance of button

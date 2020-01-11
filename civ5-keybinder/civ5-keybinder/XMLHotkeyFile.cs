@@ -81,7 +81,7 @@ namespace civ5_keybinder
                 {
                     Binding binding = new Binding(ConvertFileToUserFormat(node.SelectSingleNode("HotKey").InnerText), false, false, false);
 
-                    // Note: This section of code performs poorly in Debug mode, but fine in Release mode
+                    // Note: This section of code is slow in Debug mode, but fine in Release mode
                     try
                     {
                         if (node.SelectSingleNode("CtrlDown").InnerText.Equals("1")) { binding.Ctrl = true; }
@@ -114,14 +114,38 @@ namespace civ5_keybinder
                 {
                     node.SelectSingleNode("HotKey").InnerText = ConvertUserToFileFormat(binding.Key);
 
-                    //try
-                    //{
-                    //    node.SelectSingleNode("CtrlDown").InnerText = Convert.ToInt32(binding.Ctrl).ToString();
-                    //}
-                    //catch (NullReferenceException)
-                    //{
-                    //    //node.SelectSingleNode("HotKey").InsertAfter(new XmlNode("CtrlDown"), )
-                    //}
+                    try
+                    {
+                        node.SelectSingleNode("CtrlDown").InnerText = Convert.ToInt32(binding.Ctrl).ToString();
+                    }
+                    catch (NullReferenceException)
+                    {
+                        XmlElement element = CreateElement("CtrlDown");
+                        node.InsertAfter(element, node.SelectSingleNode("Hotkey"));
+                        node.SelectSingleNode("CtrlDown").InnerText = Convert.ToInt32(binding.Ctrl).ToString();
+                    }
+
+                    try
+                    {
+                        node.SelectSingleNode("ShiftDown").InnerText = Convert.ToInt32(binding.Shift).ToString();
+                    }
+                    catch (NullReferenceException)
+                    {
+                        XmlElement element = CreateElement("ShiftDown");
+                        node.InsertAfter(element, node.SelectSingleNode("Hotkey"));
+                        node.SelectSingleNode("ShiftDown").InnerText = Convert.ToInt32(binding.Shift).ToString();
+                    }
+
+                    try
+                    {
+                        node.SelectSingleNode("AltDown").InnerText = Convert.ToInt32(binding.Alt).ToString();
+                    }
+                    catch (NullReferenceException)
+                    {
+                        XmlElement element = CreateElement("AltDown");
+                        node.InsertAfter(element, node.SelectSingleNode("Hotkey"));
+                        node.SelectSingleNode("AltDown").InnerText = Convert.ToInt32(binding.Alt).ToString();
+                    }
                 }
             }
             Save(FilePath);
