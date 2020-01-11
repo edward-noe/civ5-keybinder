@@ -35,13 +35,5 @@ namespace civ5_keybinder
             Function = defFunction;
             Binding = defBinding;
         }
-
-        // TODO: It really shouldn't be possible to change the attributes of a Hotkey without also changing the XML
-        public void UpdateBinding(Binding defBinding)
-        {
-            Binding = defBinding;
-        }
-
-        // TODO: Move other methods to this class
     }
 }

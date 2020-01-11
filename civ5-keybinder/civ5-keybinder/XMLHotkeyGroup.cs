@@ -26,11 +26,11 @@ namespace civ5_keybinder
             }
         }
 
-        public Binding GetBinding(string name)
+        public Binding GetBinding(string hotkeyName)
         {
             if (Files.Count == 1)
             {
-                return Files[0].GetBinding(name);
+                return Files[0].GetBinding(hotkeyName);
             }
             else
             {
@@ -38,7 +38,7 @@ namespace civ5_keybinder
 
                 foreach (XMLHotkeyFile file in Files)
                 {
-                    Binding binding = file.GetBinding(name);
+                    Binding binding = file.GetBinding(hotkeyName);
                     // TODO: Is the null check still neccesary?
                     if (binding != null)
                     {
@@ -62,11 +62,11 @@ namespace civ5_keybinder
             }
         }
 
-        public void SetBinding(string name, Binding binding)
+        public void SetBinding(string hotkeyName, Binding binding)
         {
             foreach (XMLHotkeyFile file in Files)
             {
-                file.SetBinding(name, binding);
+                file.SetBinding(hotkeyName, binding);
             }
         }
     }

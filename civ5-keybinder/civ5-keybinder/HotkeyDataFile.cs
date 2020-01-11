@@ -58,11 +58,11 @@ namespace civ5_keybinder
             return names;
         }
 
-        public Binding GetDefaultHotkeyBinding(string name)
+        public Binding GetDefaultHotkeyBinding(string hotkeyName)
         {
             foreach (XmlNode hotkey in DocumentElement)
             {
-                if (hotkey.SelectSingleNode("Name").InnerText == name)
+                if (hotkey.SelectSingleNode("Name").InnerText == hotkeyName)
                 {
                     return new Binding(
                         hotkey.SelectSingleNode("Key").InnerText,
@@ -73,13 +73,6 @@ namespace civ5_keybinder
             }
             // TODO: Better error handling
             return null;
-        }
-
-        // Gets group number from file attribute
-        public int GetGroupNumber(string name)
-        {
-            char groupChar = GetStringAttribute("File", name)[0];
-            return int.Parse(groupChar.ToString());
         }
     }
 }

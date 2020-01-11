@@ -73,11 +73,11 @@ namespace civ5_keybinder
             }
         }
 
-        public Binding GetBinding(string name)
+        public Binding GetBinding(string hotkeyName)
         {
             foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType))
             {
-                if (node.SelectSingleNode("Type").InnerText == name)
+                if (node.SelectSingleNode("Type").InnerText == hotkeyName)
                 {
                     Binding binding = new Binding(ConvertFileToUserFormat(node.SelectSingleNode("HotKey").InnerText), false, false, false);
 
@@ -106,11 +106,11 @@ namespace civ5_keybinder
             return null;
         }
 
-        public void SetBinding(string name, Binding binding)
+        public void SetBinding(string hotkeyName, Binding binding)
         {
             foreach (XmlNode node in DocumentElement.SelectSingleNode("/GameData/" + HotkeyType))
             {
-                if (node.SelectSingleNode("Type").InnerText == name)
+                if (node.SelectSingleNode("Type").InnerText == hotkeyName)
                 {
                     node.SelectSingleNode("HotKey").InnerText = ConvertUserToFileFormat(binding.Key);
 

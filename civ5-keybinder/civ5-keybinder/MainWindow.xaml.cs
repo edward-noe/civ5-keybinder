@@ -152,7 +152,7 @@ namespace civ5_keybinder
 
                 if (Groups.TryGetValue(hotkey.Group, out XMLHotkeyGroup group))
                 {
-                    hotkey.UpdateBinding(group.GetBinding(name));
+                    hotkey.Binding = group.GetBinding(name);
                 }
             }
         }
@@ -182,7 +182,6 @@ namespace civ5_keybinder
             UpdateHotkeys();
         }
 
-        // TODO: Maybe this function is not neccesary; it's quite small
         private void SetBinding(Hotkey hotkey)
         {
             Groups[hotkey.Group].SetBinding(hotkey.Name, hotkey.Binding);
@@ -190,18 +189,22 @@ namespace civ5_keybinder
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Give user a chance to change their mind and warn that this cannot be undone
-            //TODO: Add a progress bar? 
-            foreach (Hotkey hotkey in Hotkeys)
+            //TODO: Add a progress bar
+            MessageBoxResult messageBoxResult = MessageBox.Show("Are you sure? This cannot be undone.", "Reset to Defaults", MessageBoxButton.YesNo);
+            
+            if (messageBoxResult == MessageBoxResult.Yes)
             {
-                Binding binding = hotkeyDataFile.GetDefaultHotkeyBinding(hotkey.Name);
+                foreach (Hotkey hotkey in Hotkeys)
+                {
+                    Binding binding = hotkeyDataFile.GetDefaultHotkeyBinding(hotkey.Name);
 
-                hotkey.UpdateBinding(binding);
+                    hotkey.Binding = binding;
 
-                SetBinding(hotkey);
+                    SetBinding(hotkey);
+                }
+
+                itemsControl.ItemsSource = SortHotkeys(Hotkeys);
             }
-
-            itemsControl.ItemsSource = SortHotkeys(Hotkeys);
         }
 
         private void Button_PreviewKeyDown(object sender, KeyEventArgs e)
